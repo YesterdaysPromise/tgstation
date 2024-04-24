@@ -1,0 +1,303 @@
+/datum/round_event_control/nearby_vessel
+	///Just exists for random reason and way of arrival for announcements
+	var/list/arrival_reason = list("recieving the wrong chart course",\
+		"having been tricked by a member of Wizard Federation",\
+		"assault executed by syndicate operatives",\
+		"one of our bigger initial-boarding arrival shuttles",\
+		"habitat-class ship with Nanostrasen's identification codes",\
+		"space hotel with engines mounted on",
+	)
+	var/list/arrival_type = list("blue-spaced",\
+		"somehow teleported",\
+		"made a bluespace jump",\
+		"casually flown",\
+		"got thrown",\
+		"ended up getting",\
+		"entered",\
+		"charted",\
+		"got blasted",\
+		"popped out of a wormhole",/
+		"arrived",
+	)
+
+
+///Friendly Ships///
+///Civilian
+/datum/round_event_control/nearby_vessel/friendly/civillain
+	name = "Civilian Friendly Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/civillain
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Temporarily adds fourth bounty of special type to the bounty console + ship is in the orbit."
+
+/datum/round_event/nearby_vessel/friendly/civillain/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/civillain/announce(fake)
+	var/list/civilship_types = list("Cruise-class ship of lost Spinward Sector vacationers",\
+		"Somebody's uncle's grill party vessel",\
+		"An ordinary civillain transporter",\
+		"One of our bigger initial-boarding arrival shuttles",\
+		"Habitat-class ship with Nanostrasen's identification codes",\
+		"Space hotel with engines mounted on",
+	)
+	var/ship = pick(civilship_types)
+	var/arrived = pick(arrival_type)
+	priority_announce("[ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+///Rich/Cargo
+/datum/round_event_control/nearby_vessel/friendly/rich
+	name = "Rich Friendly Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/rich
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Temporarily speeds up the supply shuttle + ship is in the orbit."
+
+/datum/round_event/nearby_vessel/friendly/rich/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/rich/announce(fake)
+	var/list/richship_types = list("a star-charting Nanostrasen's Accounting Division's vessel",\
+		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
+		"supplies carrying cargo ship",\
+		"big, semi-autonomous ship housing several compartments meant for calculation of stock market",\
+		"some posh prick's mansion-ship",\
+		"the ship carrying all of your wages for this shift and some supplies",\
+		"great and renowned personal quaters ship of one of our richer affiliates",\
+		"Nanostrasen's Economics Division's newest mobile supplies deployement centre",
+	)
+	var/ship = pick(richship_types)
+	var/arrived = pick(arrival_type)
+	priority_announce("[ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+/datum/round_event_control/nearby_vessel/friendly/rich/start()
+	. = ..()
+	SSshuttle.supply.callTime *= 0.75
+
+/datum/round_event_control/nearby_vessel/friendly/rich/end()
+	. = ..()
+	SSshuttle.supply.callTime /= 0.75
+
+
+///Armed/Secure
+/datum/round_event_control/nearby_vessel/friendly/armed
+	name = "Armed Friendly Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/armed
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Ship enters the orbit. Most unique events of friendly types, including dicount ERT if station is fucked."
+
+/datum/round_event/nearby_vessel/friendly/armed/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/armed/announce(fake)
+	var/list/armedshship_types = list("a star-charting Nanostrasen's Accounting Division's vessel",\
+		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
+		"supplies carrying cargo ship",\
+		"big, semi-autonomous ship housing several compartments meant for calculation of stock market",\
+		"some posh prick's mansion-ship",\
+		"the ship carrying all of your wages for this shift and some supplies",\
+		"great and renowned personal quaters ship of one of our richer affiliates",\
+		"Nanostrasen's Economics Division's newest mobile supplies deployement centre",
+	)
+	var/ship = pick(armedship_types)
+	var/arrived = pick(arrival_type)
+	var/arrived = pick(arrival_reason)
+	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+
+
+
+///Science
+/datum/round_event_control/nearby_vessel/friendly/science
+	name = "Scientific Friendly Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/science
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Temporarily increases the prices of vending machines."
+
+/datum/round_event/nearby_vessel/friendly/science/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/science/announce(fake)
+	var/list/researchshship_types = list("anthropology research team",\
+		"spaceship manned by a bunch of egg-heads",\
+		"vessel of Nanostrasen's Intelligence Devision here to check if you have any",\
+		"strange ship with a single alien scientist, almost a city's worth of archeology team, and massively oversized scanner beam",\
+		"ship of some nerds who claim your station might be unusually unlucky",\
+		"star-system charting explorator-class vessel equipped with full scientific staff",\
+		"transport ship holding currently dormant xenomorph's egg retrieved straight from the war-front",\
+		"bunch of bomb engineers claiming to have ties with now long defunct country of Cuba back on Terra"
+	)
+	var/ship = pick(researchship_types)
+	var/arrived = pick(arrival_type)
+	var/arrived = pick(arrival_reason)
+	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+/datum/round_event/nearby_vessel/friendly/science
+
+///Engineering
+/datum/round_event_control/nearby_vessel/friendly/engi
+	name = "Engineering Friendly Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/official
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Temporarily increases the prices of vending machines."
+
+/datum/round_event/nearby_vessel/friendly/engi/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/engi/announce(fake)
+	var/list/researchshship_types = list("Nanostrasen's Repairs and Construction vessel full of our trusted technicians",\
+		"Nakamura Engineering vessel on contract to build a space station three systems away",\
+		"Goreckimil Architecture Team ",\
+		"strange ship with a single alien scientist, an archeology team, and massively oversized scanner beam",\
+		"ship of some nerds who claim your station might be unusually unlucky",\
+		"star-system charting explorator-class vessel equipped with full scientific staff",\
+		"transport ship holding currently dormant xenomorph's egg retrieved straight from the war-front",
+	)
+	var/ship = pick(researchship_types)
+	var/arrived = pick(arrival_type)
+	var/arrived = pick(arrival_reason)
+	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+/datum/round_event/nearby_vessel/friendly/engi/start()
+
+
+///////////////
+
+/datum/round_event_control/eventname
+	name = "name"
+	typepath = /datum/round_event/eventname
+	weight = 10
+	max_occurrences = 1
+
+/datum/round_event_control/eventname/can_spawn_event()
+	. = ..()
+	if (!.)
+		return FALSE
+	var/datum/round_event/nearby_vessel/friendly/out_there = locate(/datum/round_event/nearby_vessel/friendly) in SSevents.running
+	return !!out_there
+
+
+
+if(SEC_LEVEL_RED)
+
+
+///////////////
+///Neutral Ships///
+
+///Generic
+/datum/round_event_control/nearby_vessel/neutral/generic
+	name = "Generic Neutral Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/official
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Allows the generic events that require a ship orbiting the station to happen, makes them more likely."
+
+/datum/round_event/nearby_vessel/friendly/engi/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/engi/announce(fake)
+	var/list/researchshship_types = list("Nanostrasen's Repairs and Construction vessel full of our trusted technicians",\
+		"Nakamura Engineering vessel on contract to build a space station three systems away",\
+		"Goreckimil Architecture Team ",\
+		"strange ship with a single alien scientist, an archeology team, and massively oversized scanner beam",\
+		"ship of some nerds who claim your station might be unusually unlucky",\
+		"star-system charting explorator-class vessel equipped with full scientific staff",\
+		"transport ship holding currently dormant xenomorph's egg retrieved straight from the war-front",
+	)
+	var/ship = pick(researchship_types)
+	var/arrived = pick(arrival_type)
+	var/arrived = pick(arrival_reason)
+	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+/datum/round_event/nearby_vessel/friendly/engi/start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/datum/round_event/nearby_vessel/friendly/announce(fake)
+	if(friendly_vessel_class == 1)
+		friendly_vessel_ship = list("cruise-class ship of Spinward Sector vacationers",\
+		"somebody's uncle's grill party vessel",\
+		"an ordinary civillain transporter",\
+		"one of our bigger initial-boarding arrival shuttles",\
+		"habitat-class ship with Nanostrasen's identification codes",\
+		"space hotel with engines mounted on",
+	)
+	if(friendly_vessel_class == 2)
+		friendly_vessel_ship = list("a star-charting Nanostrasen's Accounting Division's vessel",\
+		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
+		"supplies carrying cargo ship",\
+		"one of our bigger initial-boarding arrival shuttles",\
+		"habitat-class ship with Nanostrasen's identification codes",\
+		"space hotel with engines mounted on",
+	)
+	if(friendly_vessel_class == 3)
+		friendly_vessel_ship = list("a star-charting Nanostrasen's Accounting Division's vessel",\
+		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
+		"supplies carrying cargo ship",\
+		"one of our bigger initial-boarding arrival shuttles",\
+		"habitat-class ship with Nanostrasen's identification codes",\
+		"space hotel with engines mounted on",
+	)
+	if(friendly_vessel_class == 4)
+		friendly_vessel_ship = list("a star-charting Nanostrasen's Accounting Division's vessel",\
+		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
+		"supplies carrying cargo ship",\
+		"one of our bigger initial-boarding arrival shuttles",\
+		"habitat-class ship with Nanostrasen's identification codes",\
+		"space hotel with engines mounted on",
+	)
+	if(friendly_vessel_class == 5)
+		friendly_vessel_ship = list("a star-charting Nanostrasen's Accounting Division's vessel",\
+		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
+		"supplies carrying cargo ship",\
+		"one of our bigger initial-boarding arrival shuttles",\
+		"habitat-class ship with Nanostrasen's identification codes",\
+		"space hotel with engines mounted on",
+	)
+	var/adjective = pick(circumstances)
+	var/ship = pick(friendly_vessel_ship)
+	priority_announce("Due to [reason], prices for on-station vendors will be increased for a short period.", "Nanotrasen Accounting Division")

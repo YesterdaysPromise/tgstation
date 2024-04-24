@@ -149,9 +149,16 @@
 	if(!pot_acc.account_job)
 		say("Requesting ID card has no job assignment registered!")
 		return FALSE
-	var/list/datum/bounty/crumbs = list(random_bounty(pot_acc.account_job.bounty_types), // We want to offer 2 bounties from their appropriate job catagories
-										random_bounty(pot_acc.account_job.bounty_types), // and 1 guarenteed assistant bounty if the other 2 suck.
-										random_bounty(CIV_JOB_BASIC))
+	var/datum/round_event/nearby_vessel/friendly/civillain/vessel_bounties = locate(/datum/round_event/nearby_vessel/friendly/civillain) in SSevents.running
+	if(vessel_bounties)
+		var/list/datum/bounty/crumbs = list(random_bounty(pot_acc.account_job.bounty_types), // We want to offer 2 bounties from their appropriate job catagories
+											random_bounty(pot_acc.account_job.bounty_types), // and 1 guarenteed assistant bounty if the other 2 suck.
+											random_bounty(CIV_JOB_BASIC),
+											random_bounty(VESSEL))
+	else
+		var/list/datum/bounty/crumbs = list(random_bounty(pot_acc.account_job.bounty_types), // We want to offer 2 bounties from their appropriate job catagories
+											random_bounty(pot_acc.account_job.bounty_types), // and 1 guarenteed assistant bounty if the other 2 suck.
+											random_bounty(CIV_JOB_BASIC))
 	COOLDOWN_START(pot_acc, bounty_timer, (5 MINUTES) - cooldown_reduction)
 	pot_acc.bounties = crumbs
 

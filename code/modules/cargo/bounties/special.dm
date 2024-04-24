@@ -42,3 +42,43 @@
 	reward = CARGO_CRATE_VALUE * 2
 	required_count = 10
 	wanted_types = list(/obj/item/trash = TRUE)
+
+///Bounties related to "nearby vessel - civilian" event
+
+/datum/bounty/item/vessel/fuel
+	name = "Engine Fuel"
+	description = "Ugh, hello, hello? Quartermaster of the passing-by ship here, SS13. We are short on fuel to get on going, and would gladly appreciate some help with that. Bring in a fuel tank, would ya?"
+	reward = CARGO_CRATE_VALUE * 8
+	wanted_types = list(/obj/structure/reagent_dispensers/fueltank = TRUE)
+
+/datum/bounty/item/vessel/party
+	name = "Party Supplies"
+	description = "Oi, my Cap'n requests me to get some party supplies, yet as you might know, those just don't just randomly drift in space. Fetch something party-like enough to satisfy the bugger, would ya?"
+	reward = CARGO_CRATE_VALUE * 12
+	wanted_types = list(
+		/obj/item/food/pizza = TRUE,
+		/obj/item/food/cake = TRUE,
+		/obj/structure/etherealball = TRUE,
+		/obj/item/instrument = TRUE,
+		/obj/item/storage/box/party_poppers = TRUE,
+		/obj/item/storage/box/balloons = TRUE,
+		/obj/item/storage/box/tail_pin = TRUE,
+	)
+
+/datum/bounty/item/vessel/toiletbong
+	name = "Toiletbong"
+	description = "Our ship's clown dreamt up a truely deranged device made from a makeshift flamethrower and a bloody toilet throne. If you think you can make their dreams real, they are quite willing to pay."
+	reward = CARGO_CRATE_VALUE * 15
+	wanted_types = list(/obj/structure/toiletbong = TRUE)
+
+/datum/bounty/item/vessel/funeral
+	name = "Flowers"
+	description = "So, a memnber of our crew just passed away, and it seems some guy on drugs ate all our flowers because eating them 'healed' him, so that's rather awkward. Could you deliver some replacement for the funeral?"
+	reward = CARGO_CRATE_VALUE * 8
+	required_count = 3
+	wanted_types = list(
+		/obj/item/seeds/poppy = TRUE,
+		/obj/item/seeds/harebell = TRUE,
+		/obj/item/food/grown/rose = TRUE,
+	)
+

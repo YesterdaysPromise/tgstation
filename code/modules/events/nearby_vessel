@@ -1,5 +1,5 @@
 /datum/round_event_control/nearby_vessel
-	///Just exists for random reason and way of arrival for announcements
+	///Used in randomizing announcements.
 	var/list/arrival_reason = list("recieving the wrong chart course",\
 		"having been tricked by a member of Wizard Federation",\
 		"assault executed by syndicate operatives",\
@@ -19,7 +19,16 @@
 		"popped out of a wormhole",/
 		"arrived",
 	)
-
+	///Used for generic and wreck ships to determine who they belong to; relevant for events
+	var/list/ship_theme = list("nanostrasen",\
+		"russian",\
+		"spinward",\
+		"syndicate",\
+		"clown",\
+		"pirates",\
+		"unknown",\
+		"golem",
+	)
 
 ///Friendly Ships///
 ///Civilian
@@ -103,14 +112,12 @@
 
 
 /datum/round_event_control/nearby_vessel/friendly/armed/announce(fake)
-	var/list/armedshship_types = list("a star-charting Nanostrasen's Accounting Division's vessel",\
-		"mall-class ship with few dozen trader signatures and Nanostrasen's trading permit",\
-		"supplies carrying cargo ship",\
-		"big, semi-autonomous ship housing several compartments meant for calculation of stock market",\
-		"some posh prick's mansion-ship",\
-		"the ship carrying all of your wages for this shift and some supplies",\
-		"great and renowned personal quaters ship of one of our richer affiliates",\
-		"Nanostrasen's Economics Division's newest mobile supplies deployement centre",
+	var/list/armedshship_types = list("Nanotrasen's Corporate Warfare Division's freighter",\
+		"lower class Nanotrasen's Security Division's vessel coming back from an incident with revolutionaries at SS29",\
+		"a massive and armed prison transporter",\
+		"an fragment of a gigantic space prison, broken out, and retrofitted by russians into a spaceship, apparently,",\
+		"battlecruiser class ship with Nanostrasen's identification codes",\
+		"Nanotrasen's Security Division's academy",
 	)
 	var/ship = pick(armedship_types)
 	var/arrived = pick(arrival_type)
@@ -139,11 +146,11 @@
 	var/list/researchshship_types = list("anthropology research team",\
 		"spaceship manned by a bunch of egg-heads",\
 		"vessel of Nanostrasen's Intelligence Devision here to check if you have any",\
-		"strange ship with a single alien scientist, almost a city's worth of archeology team, and massively oversized scanner beam",\
+		"strange ship with a single, seemingly friendly alien scientist, almost a city's worth of archeology team, and massively oversized scanner beam",\
 		"ship of some nerds who claim your station might be unusually unlucky",\
 		"star-system charting explorator-class vessel equipped with full scientific staff",\
 		"transport ship holding currently dormant xenomorph's egg retrieved straight from the war-front",\
-		"bunch of bomb engineers claiming to have ties with now long defunct country of Cuba back on Terra"
+		"a vessel of bunch of bomb engineers claiming to have ties with now long defunct country of Cuba back on Terra"
 	)
 	var/ship = pick(researchship_types)
 	var/arrived = pick(arrival_type)
@@ -170,7 +177,7 @@
 /datum/round_event_control/nearby_vessel/friendly/engi/announce(fake)
 	var/list/researchshship_types = list("Nanostrasen's Repairs and Construction vessel full of our trusted technicians",\
 		"Nakamura Engineering vessel on contract to build a space station three systems away",\
-		"Goreckimil Architecture Team ",\
+		"Goreckimil Architecture Team on their way for next terrestial city project",\
 		"strange ship with a single alien scientist, an archeology team, and massively oversized scanner beam",\
 		"ship of some nerds who claim your station might be unusually unlucky",\
 		"star-system charting explorator-class vessel equipped with full scientific staff",\
@@ -214,7 +221,39 @@ if(SEC_LEVEL_RED)
 	max_occurrences = 2
 	min_players = 5
 	category = EVENT_CATEGORY_FRIENDLY
-	description = "Allows the generic events that require a ship orbiting the station to happen, makes them more likely."
+	var/generic_theme = pick(ship_theme)
+	description = "Ship enters the orbit. Makes the generic events requiring a ship more likely, but does nothing."
+
+/datum/round_event/nearby_vessel/friendly/engi/setup()
+	start_when = 1
+	end_when = rand(600, 1200)
+	announce_when = 2
+
+
+/datum/round_event_control/nearby_vessel/friendly/engi/announce(fake)
+	var/list/researchshship_types = list("Nanostrasen's Hygiene Division vessel of little significance",\
+		"Nakamura Engineering vessel on contract to build a space station three systems away",\
+		"Goreckimil Architecture Team ",\
+		"strange ship with a single alien scientist, an archeology team, and massively oversized scanner beam",\
+		"ship of some nerds who claim your station might be unusually unlucky",\
+		"star-system charting explorator-class vessel equipped with full scientific staff",\
+		"transport ship holding currently dormant xenomorph's egg retrieved straight from the war-front",
+	)
+	var/ship = pick(researchship_types)
+	var/arrived = pick(arrival_type)
+	var/arrived = pick(arrival_reason)
+	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
+
+/datum/round_event/nearby_vessel/friendly/engi/start()
+
+///Wreckage
+/datum/round_event_control/nearby_vessel/neutral/generic
+	name = "Wreckage Neutral Vessel Arrival"
+	typepath = /datum/round_event/nearby_vessel/friendly/official
+	max_occurrences = 2
+	min_players = 5
+	category = EVENT_CATEGORY_FRIENDLY
+	description = "Ship enters the orbit. Throws trash onto the station."
 
 /datum/round_event/nearby_vessel/friendly/engi/setup()
 	start_when = 1
@@ -239,6 +278,13 @@ if(SEC_LEVEL_RED)
 /datum/round_event/nearby_vessel/friendly/engi/start()
 
 
+///Moth
+
+
+///Lizard
+
+
+///Ethereal
 
 
 
@@ -251,7 +297,23 @@ if(SEC_LEVEL_RED)
 
 
 
+///////////////
+///Enemy Ships///
 
+///Activists
+
+
+///Armed
+
+
+
+///Xenomorphs
+
+
+///Pirates
+
+
+///Cursed
 
 
 

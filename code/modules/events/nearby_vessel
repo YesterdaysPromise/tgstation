@@ -339,47 +339,11 @@ if(SEC_LEVEL_RED)
 
 
 
-/datum/round_event/nearby_vessel/friendly/announce(fake)
-	if(friendly_vessel_class == 1)
-		friendly_vessel_ship = list("cruise-class ship of Spinward Sector vacationers",\
-		"somebody's uncle's grill party vessel",\
-		"an ordinary civillain transporter",\
-		"one of our bigger initial-boarding arrival shuttles",\
-		"habitat-class ship with Nanotrasen's identification codes",\
-		"space hotel with engines mounted on",
-	)
-	if(friendly_vessel_class == 2)
-		friendly_vessel_ship = list("a star-charting Nanotrasen's Accounting Division's vessel",\
-		"mall-class ship with few dozen trader signatures and Nanotrasen's trading permit",\
-		"supplies carrying cargo ship",\
-		"one of our bigger initial-boarding arrival shuttles",\
-		"habitat-class ship with Nanotrasen's identification codes",\
-		"space hotel with engines mounted on",
-	)
-	if(friendly_vessel_class == 3)
-		friendly_vessel_ship = list("a star-charting Nanotrasen's Accounting Division's vessel",\
-		"mall-class ship with few dozen trader signatures and Nanotrasen's trading permit",\
-		"supplies carrying cargo ship",\
-		"one of our bigger initial-boarding arrival shuttles",\
-		"habitat-class ship with Nanotrasen's identification codes",\
-		"space hotel with engines mounted on",
-	)
-	if(friendly_vessel_class == 4)
-		friendly_vessel_ship = list("a star-charting Nanotrasen's Accounting Division's vessel",\
-		"mall-class ship with few dozen trader signatures and Nanotrasen's trading permit",\
-		"supplies carrying cargo ship",\
-		"one of our bigger initial-boarding arrival shuttles",\
-		"habitat-class ship with Nanotrasen's identification codes",\
-		"space hotel with engines mounted on",
-	)
-	if(friendly_vessel_class == 5)
-		friendly_vessel_ship = list("a star-charting Nanotrasen's Accounting Division's vessel",\
-		"mall-class ship with few dozen trader signatures and Nanotrasen's trading permit",\
-		"supplies carrying cargo ship",\
-		"one of our bigger initial-boarding arrival shuttles",\
-		"habitat-class ship with Nanotrasen's identification codes",\
-		"space hotel with engines mounted on",
-	)
-	var/adjective = pick(circumstances)
-	var/ship = pick(friendly_vessel_ship)
-	priority_announce("Due to [reason], prices for on-station vendors will be increased for a short period.", "Nanotrasen Accounting Division")
+
+	var/list/gps_locators = list()
+	for(var/datum/component/gps/G in GLOB.GPS_list) //nulls on the list somehow
+		if(G.tracking)
+			gps_locators[G.gpstag] = G
+
+	var/list/options = gps_locators
+	options += GLOB.teleportlocs

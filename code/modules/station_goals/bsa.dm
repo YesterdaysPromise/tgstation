@@ -336,6 +336,12 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	var/list/options = gps_locators
 	if(area_aim)
 		options += GLOB.teleportlocs
+
+	///For shooting the nearby vessels that appear as the result of nearby vessel events
+	var/datum/round_event/nearby_vessel/friendly/civillain/civilship_target = locate(/datum/round_event/nearby_vessel/friendly/civillain) in SSevents.running
+	if(civilship_target)
+		options += "Civilian Ship"
+
 	var/victim = tgui_input_list(user, "Select target", "Artillery Targeting", options)
 	if(isnull(victim))
 		return
@@ -351,6 +357,8 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	else if(istype(target, /datum/component/gps))
 		var/datum/component/gps/G = target
 		return G.gpstag
+	else
+		return target
 
 /obj/machinery/computer/bsa_control/proc/get_impact_turf()
 	if(obj_flags & EMAGGED)

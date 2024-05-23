@@ -150,7 +150,7 @@
 ///Engineering
 /datum/round_event_control/nearby_vessel/friendly/engi
 	name = "Engineering Friendly Vessel Arrival"
-	typepath = /datum/round_event/nearby_vessel/friendly/official
+	typepath = /datum/round_event/nearby_vessel/friendly/engi
 	max_occurrences = 2
 	min_players = 5
 	category = EVENT_CATEGORY_FRIENDLY
@@ -163,10 +163,8 @@
 	var/list/researchshship_types = list("Nanotrasen's Heavy Industry vessel full of our trusted technicians",\
 		"Nakamura Engineering vessel on contract to build a space station three systems away",\
 		"Goreckimil Architecture Team on their way for next terrestial city project",\
-		"strange ship with a single alien scientist, an archeology team, and massively oversized scanner beam",\
-		"ship of some nerds who claim your station might be unusually unlucky",\
-		"star-system charting explorator-class vessel equipped with full scientific staff",\
-		"transport ship holding currently dormant xenomorph's egg retrieved straight from the war-front",
+		"Some friendly Spinward Coalition engineers",\
+		"The team which built your space station",
 	)
 	var/ship = pick(researchship_types)
 	var/arrived = pick(arrival_type)

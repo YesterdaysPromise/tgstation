@@ -3,6 +3,7 @@
 	var/list/arrival_reason = list("recieving the wrong chart course",\
 		"having been tricked by a member of Wizard Federation",\
 		"assault executed by syndicate operatives",
+		"anomaly in their navigation system"
 	)
 	var/list/arrival_type = list("blue-spaced",\
 		"somehow teleported",\
@@ -106,7 +107,7 @@
 	var/list/armedshship_types = list("Nanotrasen's Corporate Warfare Division's freighter",\
 		"lower class Nanotrasen's Security Division's vessel coming back from an incident with revolutionaries at SS29",\
 		"a massive and armed prison transporter",\
-		"an fragment of a gigantic space prison, broken out, and retrofitted by russians into a spaceship, apparently,",\
+		"an fragment of a gigantic space prison, broken out, and retrofitted by space russians into a spaceship, apparently,",\
 		"battlecruiser class ship with Nanotrasen's identification codes",\
 		"Nanotrasen's Security Division's academy vessel",
 	)

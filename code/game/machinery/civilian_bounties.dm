@@ -153,7 +153,7 @@
 	if(vessel_bounties)
 		var/list/datum/bounty/crumbs = list(random_bounty(pot_acc.account_job.bounty_types), // We want to offer 2 bounties from their appropriate job catagories
 											random_bounty(pot_acc.account_job.bounty_types), // and 1 guarenteed assistant bounty if the other 2 suck.
-											random_bounty(CIV_JOB_BASIC),
+											random_bounty(CIV_JOB_BASIC), // Plus 1 bounty for the vessel that's around the station during the event
 											random_bounty(VESSEL))
 	else
 		var/list/datum/bounty/crumbs = list(random_bounty(pot_acc.account_job.bounty_types), // We want to offer 2 bounties from their appropriate job catagories

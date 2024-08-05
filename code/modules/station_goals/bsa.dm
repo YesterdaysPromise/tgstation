@@ -309,7 +309,10 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 			cannon_ref = WEAKREF(deploy())
 			. = TRUE
 		if("fire")
-			fire(usr)
+			if(istype(target, /area) || istype(target, /datum/component/gps))
+				fire(usr)
+			else
+				vessel_fire(usr)
 			. = TRUE
 		if("recalibrate")
 			calibrate(usr)
@@ -327,6 +330,11 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	var/list/options = gps_locators
 	if(area_aim)
 		options += GLOB.teleportlocs
+
+	var/genericship_target = locate(/datum/round_event_control/nearby_vessel/neutral/generic) in SSevents.running
+	if(genericship_target)
+		options += genericship_target.BSA_target_name
+
 	var/victim = tgui_input_list(user, "Select target", "Artillery Targeting", options)
 	if(isnull(victim))
 		return
@@ -342,6 +350,8 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	else if(istype(target, /datum/component/gps))
 		var/datum/component/gps/G = target
 		return G.gpstag
+	else
+		return target
 
 /obj/machinery/computer/bsa_control/proc/get_impact_turf()
 	if(obj_flags & EMAGGED)
@@ -363,6 +373,30 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	notice = null
 	var/turf/target_turf = get_impact_turf()
 	cannon.fire(user, target_turf)
+
+/obj/machinery/computer/bsa_control/proc/vessel_fire(mob/user)
+	var/obj/machinery/bsa/full/cannon = cannon_ref?.resolve()
+	if(!cannon)
+		notice = "No Cannon Exists!"
+		return
+	if(cannon.machine_stat)
+		notice = "Cannon unpowered!"
+		return
+	notice = null
+	if(target = "Nanotrasen Vessel")
+		var/vessel_target = locate(/datum/round_event_control/nearby_vessel/neutral/generic) in SSevents.running
+		vessel_target.kill()
+		priority_announce(pick("If we are reading it right, some kind of horrible missfire just happend or you let some idiot fiddle with one of the better station-mounted weapons avaible to us... Guess who will pay for damages?",\
+		"Really, guys, you can't handle a hyperadvanced bluespace artillery cannon properly?! It's not rocket science! Well, it kinda is, but... egh. Off goes your money.",\
+		"Do you have any idea how much paperwork will this little accident cost us? How about we show you by subtracting it straight from you? Someone will have to really answer for this..."), "Nanotrasen Naval Command")
+		cargo_bank.adjust_money(rand(-10000, -5000))
+		return
+	if (target = "Clown Vessel")
+		if(user.job == JOB_MIME)
+			user.client.give_award(/datum/award/achievement/misc/unspeakable_crimes, user)
+		var/vessel_target = locate(/datum/round_event_control/nearby_vessel/neutral/generic) in SSevents.running
+		vessel_target.kill()
+		priority_announce("That will require a lot of PR work with the Clown Planet, and it won't be easy...", "Nanotrasen Naval Command")
 
 /obj/machinery/computer/bsa_control/proc/deploy(force=FALSE)
 	var/obj/machinery/bsa/full/prebuilt = locate() in range(7) //In case of adminspawn

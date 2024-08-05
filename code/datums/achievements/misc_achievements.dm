@@ -185,6 +185,12 @@
 	database_id = MEDAL_CULT_SHUTTLE_OMFG
 	icon_state = "cult_shuttle_omfg"
 
+/datum/award/achievement/misc/unspeakable_crimes
+	name = "Unspeakable Crimes"
+	desc = "As a mime, use BSA to shoot down a ship of clowns. Rivarly is understandable, but space jesus, why on Terra would you do that?!"
+	database_id = MEDAL_UNSPEAKABLE_CRIMES
+	icon_state = "unspeakable_crimes"
+
 /datum/award/achievement/misc/clickbait
 	name = "Clickbait"
 	desc = "Where's my free smartphone?!?"

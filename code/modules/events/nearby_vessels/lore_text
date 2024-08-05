@@ -2,8 +2,14 @@
 	///Used in randomizing announcements.
 	var/list/arrival_reason = list("recieving the wrong chart course",\
 		"having been tricked by a member of Wizard Federation",\
-		"assault executed by syndicate operatives",
-		"anomaly in their navigation system"
+		"assault executed by syndicate operatives",\
+		"anomaly in their navigation system",\
+		"some stupid intern's fuck-up",\
+		"thirty seven space snakes",\
+		"a broken bluespace drive",\
+		"ugh... em... reasons",\
+		"mix-up of coordinates",\
+		"hostile interfarance with ships's subsystems",
 	)
 	var/list/arrival_type = list("blue-spaced",\
 		"somehow teleported",\
@@ -52,7 +58,7 @@
 	BSA_target_name = "Foreign Corporate Entity's Vessel"
 
 /datum/nearby_vessel/spinward
-	genericship_types = list("a vessel carrying a team of miners from Spinward Sector",\
+	genericship_types = list("a suspicious vessel carrying a team of miners from Spinward Sector",\
 		"a ship of some drunk russian hunters who somehow got the information there were monsters here",\
 		"cargo shipment headed and reserved for Novoyamoskva, capital of the Spinward Sector",\
 		"Spinward Stellar Coalition tax ship",
@@ -113,13 +119,12 @@
 	var/generic_theme = pick(ship_theme)
 
 /datum/round_event_control/nearby_vessel/neutral/generic/announce(fake)
-
 	var/ship = pick(researchship_types)
 	var/arrived = pick(arrival_type)
 	var/arrived = pick(arrival_reason)
-	priority_announce(pick("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.",
-	"Attention, [ship] has been detected in [station_name()]'s proximity."
-	"Sensors detect that [ship] has [arrived] somewhere within fire range but far outside of boarding distance of the station."
-	"We've just recieved intel that [reason], your system should soon be visited by [ship]."), "Automated Arrival Announcer")
+	priority_announce(pick("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.",\
+	"Attention, [ship] has been detected in [station_name()]'s proximity.",\
+	"Sensors detect that [ship] has [arrived] somewhere within fire range but far outside of boarding distance of the station.",\
+	"We've just recieved intel that due to [reason], your system should soon be visited by [ship]."), "Automated Arrival Announcer",)
 
 /datum/round_event/nearby_vessel/neutral/generic/start()

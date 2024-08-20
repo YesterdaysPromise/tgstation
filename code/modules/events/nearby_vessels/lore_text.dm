@@ -2,11 +2,15 @@
 	///Used in randomizing announcements.
 	var/list/arrival_reason = list("recieving the wrong chart course",\
 		"having been tricked by a member of Wizard Federation",\
+		"an unstated third party",\
 		"assault executed by syndicate operatives",\
 		"anomaly in their navigation system",\
 		"some stupid intern's fuck-up",\
+		"Jacob's fault",\
 		"thirty seven space snakes",\
+		"party so good it tore a rip in space-time",\
 		"a broken bluespace drive",\
+		"a demon summoning",\
 		"ugh... em... reasons",\
 		"mix-up of coordinates",\
 		"hostile interfarance with ships's subsystems",
@@ -76,7 +80,7 @@
 /datum/nearby_vessel/clown
 	genericship_types = list("an entire space-circus (oh god)",\
 		"bananium prospector team from the Clown Planet",\
-		"an evengalizing bana-shaped ship on a quest to spread the word of the Honkmother",\
+		"an evengalizing banana-shaped ship on a quest to spread the word of the Honkmother",\
 		"a fresh clown shipment towards CentCom",
 	)
 	BSA_target_name = "Clown Vessel"
@@ -104,27 +108,3 @@
 		"mining ship with no carbon lifeforms, but multiple bio signatures detected",
 	)
 	BSA_target_name = "Golem Vessel"
-
-
-/datum/round_event_control/nearby_vessel/neutral/generic
-	name = "Generic Neutral Vessel Arrival"
-	typepath = /datum/round_event/nearby_vessel/friendly/official
-	max_occurrences = 2
-	min_players = 5
-	category = EVENT_CATEGORY_FRIENDLY
-	description = "Ship enters the orbit. Triggers sub-events more often than other ships, but does nothing, nor has any unique of its own."
-
-/datum/round_event/nearby_vessel/neutral/generic/setup()
-	end_when = rand(600, 1200)
-	var/generic_theme = pick(ship_theme)
-
-/datum/round_event_control/nearby_vessel/neutral/generic/announce(fake)
-	var/ship = pick(researchship_types)
-	var/arrived = pick(arrival_type)
-	var/arrived = pick(arrival_reason)
-	priority_announce(pick("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.",\
-	"Attention, [ship] has been detected in [station_name()]'s proximity.",\
-	"Sensors detect that [ship] has [arrived] somewhere within fire range but far outside of boarding distance of the station.",\
-	"We've just recieved intel that due to [reason], your system should soon be visited by [ship]."), "Automated Arrival Announcer",)
-
-/datum/round_event/nearby_vessel/neutral/generic/start()

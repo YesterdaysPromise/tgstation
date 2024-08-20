@@ -38,6 +38,7 @@ ADMIN_VERB(force_event, R_FUN, "Trigger Event", "Forces an event to occur.", ADM
 			EVENT_CATEGORY_JANITORIAL = "bath",
 			EVENT_CATEGORY_SPACE = "meteor",
 			EVENT_CATEGORY_WIZARD = "hat-wizard",
+			EVENT_CATEGORY_VESSEL = "",
 		)
 	var/list/data = list()
 

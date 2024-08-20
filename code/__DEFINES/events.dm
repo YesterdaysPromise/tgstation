@@ -32,6 +32,8 @@
 #define EVENT_CATEGORY_SPACE "Space Threats"
 ///Events summoned by a wizard
 #define EVENT_CATEGORY_WIZARD "Wizard"
+///Events which involve a space-faring vessel remain in proximity of the station for a time, usually providing some passive effect
+#define EVENT_CATEGORY_VESSEL "Vessel"
 
 /// Return from admin setup to stop the event from triggering entirely.
 #define ADMIN_CANCEL_EVENT "cancel event"

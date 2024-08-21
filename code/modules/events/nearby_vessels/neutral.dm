@@ -8,10 +8,12 @@
 
 /datum/round_event/nearby_vessel/neutral/generic/setup()
 	end_when = rand(600, 1200)
-	var/generic_theme = pick(ship_theme)
 
 /datum/round_event/nearby_vessel/neutral/generic/announce(fake)
-	var/ship = pick(genericshship_types)
+	var/generic_vessel_theme = pick(vessel_theme)
+	var/datum/vessel_theme/datum = GLOB.vessel_theme_to_datum[generic_vessel_theme]
+	var/ship = pick(vessel_theme.genericshship_types)
+	var/BSA_target_name = (vessel_theme.BSA_target_name)
 	var/arrived = pick(arrival_type)
 	var/reason = pick(arrival_reason)
 	priority_announce(pick("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.",\

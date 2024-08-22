@@ -324,7 +324,7 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	if(area_aim)
 		options += GLOB.teleportlocs
 
-	var/genericship_target = locate(/datum/round_event/nearby_vessel/neutral/generic) in SSevents.running
+	var/datum/round_event/nearby_vessel/neutral/generic/genericship_target = locate(/datum/round_event/nearby_vessel/neutral/generic) in SSevents.running
 	if(genericship_target)
 		options += genericship_target.BSA_target_name
 
@@ -378,9 +378,8 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	notice = null
 	var/datum/bank_account/cargo_bank = SSeconomy.get_dep_account(ACCOUNT_CAR)
 
-	var/datum/vessel_theme/vessel_target = locate(/datum/round_event/nearby_vessel/neutral/generic) in SSevents.running
-	if(vessel_target)
-		/datum/round_event/nearby_vessel/neutral/generic.kill()
+	var/datum/round_event/nearby_vessel/vessel_target = locate(/datum/round_event/nearby_vessel/neutral/generic) in SSevents.running
+	vessel_target.kill()
 
 	switch(target)
 		if("Nanotrasen Vessel")

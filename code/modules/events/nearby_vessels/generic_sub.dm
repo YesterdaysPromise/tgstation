@@ -1,5 +1,5 @@
 /datum/round_event_control/nearby_vessel/autodestruct
-	name = "Debree Wave"
+	name = "Autodesruction"
 	typepath = /datum/round_event/meteor_wave
 	weight = 4
 	min_players = 15
@@ -7,10 +7,6 @@
 	category = EVENT_CATEGORY_SPACE
 	description = "A space vessel orbitting the station spontaniously blows up! Doesn't work if there is no vessel, though, obviously."
 	map_flags = EVENT_SPACE_ONLY
-
-
-
-
 
 /datum/round_event_control/nearby_vessel/debree_wave
 	name = "Debree Wave"

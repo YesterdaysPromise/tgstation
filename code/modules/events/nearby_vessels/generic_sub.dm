@@ -29,16 +29,11 @@
 	max_occurrences = 0
 	category = EVENT_CATEGORY_SPACE
 	description = "A series of nearby vessel sub events which send dialogues to comms console of the station. Some answers lead to rewards, some, to punishments."
-	map_flags = EVENT_SPACE_ONLY
 
 
 
-/datum/round_event_control/dialogue
-	typepath = /datum/round_event/meteor_wave
-
-
-
-
+/datum/round_event_control/dialogue/howitgoing
+	typepath = /datum/round_event/dialogue/howitgoing
 
 
 /datum/round_event/dialogue
@@ -48,7 +43,7 @@
 /datum/round_event/dialogue/announce(fake)
 	priority_announce("Incoming subspace communication. Secure channel opened at all communication consoles.", "Incoming Message", SSstation.announcer.get_rand_report_sound())
 
-/datum/round_event/dialogue/setup()
+/datum/round_event/dialogue/howitgoingsetup()
 	ship_name = pick(strings(PIRATE_NAMES_FILE, "rogue_names"))
 
 /datum/round_event/dialogue/start()
@@ -57,9 +52,6 @@
 	GLOB.communications_controller.send_message(insurance_message, unique = TRUE)
 
 /datum/round_event/dialogue/proc/answered()
-	if(EMERGENCY_AT_LEAST_DOCKED)
-		priority_announce("You are definitely too late to purchase insurance, my friends. Our agents don't work on site.",sender_override = ship_name, color_override = "red")
-		return
 	if(insurance_message && insurance_message.answered == 1)
 		var/datum/bank_account/station_balance = SSeconomy.get_dep_account(ACCOUNT_CAR)
 		if(!station_balance?.adjust_money(-insurance_evaluation))

@@ -36,26 +36,16 @@
 	typepath = /datum/round_event/dialogue/howitgoing
 
 
-/datum/round_event/dialogue
-	var/ship_name = "\"In the Unlikely Event\""
+/datum/round_event/dialogue/howitgoing
 	var/datum/comm_message/dialogue
 
-/datum/round_event/dialogue/announce(fake)
+/datum/round_event/dialogue/howitgoing/announce(fake)
 	priority_announce("Incoming subspace communication. Secure channel opened at all communication consoles.", "Incoming Message", SSstation.announcer.get_rand_report_sound())
 
-/datum/round_event/dialogue/howitgoingsetup()
-	ship_name = pick(strings(PIRATE_NAMES_FILE, "rogue_names"))
+/datum/round_event/dialogue/howitgoing/start()
+	dialogue = new("How is it going?", "Hey ugh, how are you doing there? Bit boring work day here, so looking for something interesting to talk with the crew about.", list("It's rather hectic.","Rather boring shift here.", "I don't think I can disclouse that."))
+	dialogue.answer_callback = CALLBACK(src, PROC_REF(answered))
+	GLOB.communications_controller.send_message(dialogue, unique = TRUE)
 
-/datum/round_event/dialogue/start()
-	insurance_message = new("Shuttle Insurance", "Hey, pal, this is the [ship_name]. Can't help but notice you're rocking a wild and crazy shuttle there with NO INSURANCE! Crazy. What if something happened to it, huh?! We've done a quick evaluation on your rates in this sector and we're offering [insurance_evaluation] to cover for your shuttle in case of any disaster.", list("Purchase Insurance.","Reject Offer."))
-	insurance_message.answer_callback = CALLBACK(src, PROC_REF(answered))
-	GLOB.communications_controller.send_message(insurance_message, unique = TRUE)
-
-/datum/round_event/dialogue/proc/answered()
+/datum/round_event/dialogue/howitgoing/proc/answered()
 	if(insurance_message && insurance_message.answered == 1)
-		var/datum/bank_account/station_balance = SSeconomy.get_dep_account(ACCOUNT_CAR)
-		if(!station_balance?.adjust_money(-insurance_evaluation))
-			priority_announce("You didn't send us enough money for shuttle insurance. This, in the space layman's terms, is considered scamming. We're keeping your money, scammers!", sender_override = ship_name, color_override = "red")
-			return
-		priority_announce("Thank you for purchasing shuttle insurance!", sender_override = ship_name, color_override = "red")
-		SSshuttle.nearby_vessel/dialogue = TRUE

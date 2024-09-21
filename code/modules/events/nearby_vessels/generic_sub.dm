@@ -1,8 +1,8 @@
 /datum/round_event_control/autodestruct
 	name = "Autodesruction"
 	typepath = /datum/round_event/meteor_wave
-	weight = 4
-	min_players = 15
+	weight = 0
+	min_players = 10
 	max_occurrences = 0
 	category = EVENT_CATEGORY_SPACE
 	description = "A space vessel orbitting the station spontaniously blows up! Doesn't work if there is no vessel, though, obviously."
@@ -11,12 +11,47 @@
 /datum/round_event_control/debree_wave
 	name = "Debree Wave"
 	typepath = /datum/round_event/meteor_wave
-	weight = 4
+	weight = 8
 	min_players = 15
 	max_occurrences = 0
+	earliest_start = 5 MINUTES
 	category = EVENT_CATEGORY_SPACE
 	description = "Items and scrap-metoers fly towards the station. Happens whenever a nearby vessel blows up, or is blown up. Might also happen on debris field."
 	map_flags = EVENT_SPACE_ONLY
+
+/datum/round_event_control/debree_wave/generic
+	name = "Generic Debree Wave"
+	typepath = /datum/round_event/meteor_wave
+
+/datum/round_event_control/debree_wave/techy
+	name = "Techy Debree Wave"
+	typepath = /datum/round_event/meteor_wave
+
+/datum/round_event_control/debree_wave/nanostrasen
+	name = "Nanostrasen Debree Wave"
+	typepath = /datum/round_event/meteor_wave
+
+/datum/round_event_control/debree_wave/clown
+	name = "Clown Debree Wave"
+	weight = 6
+	typepath = /datum/round_event/meteor_wave
+
+/datum/round_event_control/debree_wave/syndicate
+	name = "Syndicate Debree Wave"
+	weight = 4
+	typepath = /datum/round_event/meteor_wave
+
+/datum/round_event_control/debree_wave/magicky
+	name = "Magicky Debree Wave"
+	weight = 2
+	typepath = /datum/round_event/meteor_wave
+
+/datum/round_event_control/debree_wave/enigma
+	name = "Enignatic Debree Wave"
+	weight = 2
+	typepath = /datum/round_event/meteor_wave
+
+
 
 ///This one should go last because its bit wordy. Dialogue, duh.
 
@@ -31,10 +66,9 @@
 	description = "A series of nearby vessel sub events which send dialogues to comms console of the station. Some answers lead to rewards, some, to punishments."
 
 
-
+/// How is it going?
 /datum/round_event_control/dialogue/howitgoing
 	typepath = /datum/round_event/dialogue/howitgoing
-
 
 /datum/round_event/dialogue/howitgoing
 	var/datum/comm_message/dialogue
@@ -51,7 +85,7 @@
 /datum/round_event/dialogue/howitgoing/proc/start_answered()
 	switch(dialogue.answered)
 		if(1)
-			intrest()
+			interest()
 		if(2)
 			if(prob(60))
 				dead_end(1)
@@ -63,12 +97,12 @@
 			else
 				oh_please()
 
-/datum/round_event/dialogue/howitgoing/proc/intrest()
+/datum/round_event/dialogue/howitgoing/proc/interest()
 	dialogue = new("Really? Damn. Don't envy you on that. Mind sharing your camera feed key so we here can see what's going on in there? Surely would keep up my crew's spirit, if at your expense.", list("Sure, just don't share it.","That'd be a breach of safety."))
-	dialogue.answer_callback = CALLBACK(src, PROC_REF(intrest_answered))
+	dialogue.answer_callback = CALLBACK(src, PROC_REF(interest_answered))
 	GLOB.communications_controller.send_message(dialogue, unique = TRUE)
 
-/datum/round_event/dialogue/howitgoing/proc/intrest_answered()
+/datum/round_event/dialogue/howitgoing/proc/interest_answered()
 	switch(dialogue.answered)
 		if(1)
 			if(prob(malice))
@@ -100,7 +134,7 @@
 /datum/round_event/dialogue/howitgoing/proc/please_answered()
 	switch(dialogue.answered)
 		if(1)
-			intrest()
+			interest()
 		if(2)
 			if(prob(60))
 				dead_end(1)
@@ -122,10 +156,10 @@
 		if(2)
 			malice+=10
 			if(prob(malice))
-				nt_intervention()
+				addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
 
 /datum/round_event/dialogue/howitgoing/proc/dissapointment()
-	dialogue = new("This... Seems rather boring to me. Are you even more boring normally, or what? Put it on my telescreens and my crew claims they’d prefer static...", list("Sorry, I guess.","Better than nothing, no?"))
+	dialogue = new("This... Seems rather boring to me. Are you even more boring normally, or what? Put it on my telescreens and my crew claims they'd prefer static...", list("Sorry, I guess.","Better than nothing, no?"))
 	dialogue.answer_callback = CALLBACK(src, PROC_REF(dissapointment_answer))
 	GLOB.communications_controller.send_message(dialogue, unique = TRUE)
 	malice += 10
@@ -136,12 +170,12 @@
 			if(prob(50))
 				malice -= 5
 			if(prob(malice))
-				nt_intervention()
+				addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
 		if(2)
 			if(prob(20))
 				malice -= 20
 			if(prob(malice))
-				nt_intervention()
+				addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
 
 /datum/round_event/dialogue/howitgoing/proc/dead_end(variant)
 	switch(variant)
@@ -170,3 +204,5 @@
 		nt_intervention()
 
 /datum/round_event/dialogue/howitgoing/proc/nt_intervention()
+	priority_announce("The camera footage of the station got leaked, causing a massive security hazard. Though our cybersecurity team acted quickly mitaging major breaches, the source of the breach was traced to your comms console. You will be fined heavily for this.")
+

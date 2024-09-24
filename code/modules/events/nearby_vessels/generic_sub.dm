@@ -19,6 +19,51 @@
 	description = "Items and scrap-metoers fly towards the station. Happens whenever a nearby vessel blows up, or is blown up. Might also happen on debris field."
 	map_flags = EVENT_SPACE_ONLY
 
+///Most of this is shamelessy stolen from meteor wave, since its similiar in principle and premise. I will clobber you if you object.
+/datum/round_event/debree_wave
+	start_when = 6
+	end_when = 66
+	announce_when = 1
+	var/list/debree_type
+	var/debree_name = "normal"
+
+/datum/round_event/debree_wave/New()
+	..()
+	if(!wave_type)
+		determine_wave_type()
+
+/datum/round_event/debree_wave/proc/determine_wave_type()
+	if(!wave_name)
+		wave_name = pick_weight(list(
+			"generic" = 50,
+			"techy" = 40,
+			"nanostrasens" = 10))
+	switch(wave_name)
+		if("normal")
+			debree_type = GLOB.meteors_debree_nt
+		if("threatening")
+			wave_type = GLOB.meteors_debree_syndicate
+		if("threatening")
+			wave_type = GLOB.meteors_debree_generic
+		if("catastrophic")
+			if(check_holidays(HALLOWEEN))
+				wave_type = GLOB.meteorsSPOOKY
+			else
+				wave_type = GLOB.meteors_catastrophic
+		if("meaty")
+			wave_type = GLOB.meateors
+		if("space dust")
+			wave_type = GLOB.meteors_dust
+		if("halloween")
+			wave_type = GLOB.meteorsSPOOKY
+		else
+			WARNING("Wave name of [wave_name] not recognised.")
+			kill()
+
+/datum/round_event/debree_wave/tick()
+	if(ISMULTIPLE(activeFor, 3))
+		spawn_meteors(5, wave_type) //meteor list types defined in gamemode/meteor/meteors.dm
+
 /datum/round_event_control/debree_wave/generic
 	name = "Generic Debree Wave"
 	typepath = /datum/round_event/meteor_wave
@@ -27,8 +72,8 @@
 	name = "Techy Debree Wave"
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/nanostrasen
-	name = "Nanostrasen Debree Wave"
+/datum/round_event_control/debree_wave/nanotrasen
+	name = "Nanotrasen Debree Wave"
 	typepath = /datum/round_event/meteor_wave
 
 /datum/round_event_control/debree_wave/clown
@@ -201,7 +246,7 @@
 			GLOB.communications_controller.send_message("You got all that going on and still menage to send a message, huh? Quite admirable. Here, have the payment for the entertainment... and to repair the damages..", unique = TRUE)
 			cargo_bank.adjust_money(5000)
 	if(prob(malice))
-		nt_intervention()
+		addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
 
 /datum/round_event/dialogue/howitgoing/proc/nt_intervention()
 	priority_announce("The camera footage of the station got leaked, causing a massive security hazard. Though our cybersecurity team acted quickly mitaging major breaches, the source of the breach was traced to your comms console. You will be fined heavily for this.")

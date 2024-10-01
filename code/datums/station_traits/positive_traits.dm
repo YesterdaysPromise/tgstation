@@ -403,9 +403,9 @@
 
 /obj/item/card/id/advanced/technician_id
 	name = "Repair Technician ID"
-	desc = "Repair Technician? We don't have those in this sector, just a bunch of lazy engineers! This must have been from the between-shift crew..."
-	registered_name = "Pluoxium LXVII"
-	registered_age = 67
+	desc = "Repair Technician? We don't have those in this sector, just a bunch of lazy engineers! This must have been from the between-shift crew... Or a vessel not from this sector."
+	registered_name = (get_random_unique_name)
+	registered_age = (rand(18,140))
 	trim = /datum/id_trim/technician_id
 
 /datum/id_trim/technician_id

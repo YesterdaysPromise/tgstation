@@ -8,8 +8,8 @@
 	description = "A space vessel orbitting the station spontaniously blows up! Doesn't work if there is no vessel, though, obviously."
 	map_flags = EVENT_SPACE_ONLY
 
-/datum/round_event_control/debree_wave
-	name = "Debree Wave"
+/datum/round_event_control/debris_wave
+	name = "debris Wave"
 	typepath = /datum/round_event/meteor_wave
 	weight = 8
 	min_players = 15
@@ -20,79 +20,154 @@
 	map_flags = EVENT_SPACE_ONLY
 
 ///Most of this is shamelessy stolen from meteor wave, since its similiar in principle and premise. I will clobber you if you object.
-/datum/round_event/debree_wave
+/datum/round_event/debris_wave
 	start_when = 6
 	end_when = 66
 	announce_when = 1
-	var/list/debree_type
-	var/debree_name = "normal"
+	var/list/debris_type
+	var/debris_name = "generic"
+	///overall 'cost' of the items we throw at the station.
+	var/item_bank = 10 + rand(5, 10)
+	/// cost deducted on the throw.
+	var/item_spendings = 1
+	/// the item we are throwing.
+	var/item
+	///
+	var/turf/item_spawn
+	var/turf/item_target
+	///
+	var/datum/debris/debris_list
 
-/datum/round_event/debree_wave/New()
+
+/datum/round_event/debris_wave/New()
 	..()
-	if(!wave_type)
+	if(!debris_type)
 		determine_wave_type()
 
-/datum/round_event/debree_wave/proc/determine_wave_type()
-	if(!wave_name)
-		wave_name = pick_weight(list(
+/datum/round_event/debris_wave/proc/determine_wave_type()
+	if(!debris_name)
+		debris_name = pick_weight(list(
 			"generic" = 50,
 			"techy" = 40,
-			"nanostrasens" = 10))
-	switch(wave_name)
-		if("normal")
-			debree_type = GLOB.meteors_debree_nt
-		if("threatening")
-			wave_type = GLOB.meteors_debree_syndicate
-		if("threatening")
-			wave_type = GLOB.meteors_debree_generic
-		if("catastrophic")
-			if(check_holidays(HALLOWEEN))
-				wave_type = GLOB.meteorsSPOOKY
-			else
-				wave_type = GLOB.meteors_catastrophic
-		if("meaty")
-			wave_type = GLOB.meateors
-		if("space dust")
-			wave_type = GLOB.meteors_dust
-		if("halloween")
-			wave_type = GLOB.meteorsSPOOKY
+			"nanotrasen" = 10))
+	switch(debris_name)
+		if("nanotrasen")
+			debris_type = GLOB.meteors_debris_nt
+			if(STATION_TIME_PASSED() > 25 MINUTES)
+				if(prob(60))
+					debris_type += GLOB.meteors_debris_generic
+				else
+					debris_type += GLOB.meteors_debris_nt
+		if("syndicate")
+			debris_type = GLOB.meteors_debris_syndicate
+			if(STATION_TIME_PASSED() > 25 MINUTES)
+				if(prob(60))
+					debris_type += GLOB.meteors_debris_syndicate
+				else
+					debris_type += GLOB.meteors_debris_generic
+
 		else
-			WARNING("Wave name of [wave_name] not recognised.")
-			kill()
+			debris_type = GLOB.meteors_debris_generic
+			if(STATION_TIME_PASSED() > 25 MINUTES)
+				debris_type += GLOB.meteors_debris_generic
+	if("techy")
+		item_bank += 5
+	if(STATION_TIME_PASSED() > 10 MINUTES)
+		item_bank += 5
+	if(STATION_TIME_PASSED() > 30 MINUTES)
+		item_bank += 5
 
-/datum/round_event/debree_wave/tick()
+/datum/round_event/debris_wave/tick()
 	if(ISMULTIPLE(activeFor, 3))
-		spawn_meteors(5, wave_type) //meteor list types defined in gamemode/meteor/meteors.dm
+		spawn_meteors(1, debris_type) //meteor list types defined in gamemode/meteor/meteors.dm
 
-/datum/round_event_control/debree_wave/generic
-	name = "Generic Debree Wave"
+		///Throws items at the station
+		if(item_bank > 1)
+			item_spendings = rand(0, item_bank/2)
+		else
+			item_spendings = 1
+
+
+		while(item_spendings > 0)
+
+			item_spawn = get_edge_target_turf()
+			item_target = get_random_station_turf()
+
+			switch(debris_name)
+				if("nanotrasen")
+					if(prob(0.1) || item_spendings > 4)
+						item = spawn_item(item_spawn, /obj/item/banner)
+						item_spendings -= 5
+					else if(prob(25) || item_spending > 2)
+						item = spawn_item(item_spawn, pick(list()))
+						item_spendings -= 3
+					else if(prob(50) || item_spending > 1)
+						item = spawn_item(item_spawn, pick(list()))
+						item_spendings -= 2
+					else
+						item = spawn_item(item_spawn, pick(list()))
+						item_spendings -= 1
+
+			item.throw_at(target, 3, 3, spin = FALSE)
+
+/datum/round_event_control/debris_wave/generic
+	name = "Generic debris Wave"
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/techy
-	name = "Techy Debree Wave"
+/datum/round_event_control/debris_wave/techy
+	name = "Techy debris Wave"
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/nanotrasen
-	name = "Nanotrasen Debree Wave"
+/datum/round_event_control/debris_wave/nanotrasen
+	name = "Nanotrasen debris Wave"
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/clown
-	name = "Clown Debree Wave"
+
+/datum/debris/nanotrasen/common
+	loot_list = (/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+
+/datum/debris/nanotrasen/unommon
+	loot_list = (/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+
+/datum/debris/nanotrasen/rare
+	loot_list = (/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
+
+/datum/round_event_control/debris_wave/clown
+	name = "Clown debris Wave"
 	weight = 6
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/syndicate
-	name = "Syndicate Debree Wave"
+/datum/round_event_control/debris_wave/syndicate
+	name = "Syndicate debris Wave"
 	weight = 4
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/magicky
-	name = "Magicky Debree Wave"
+/datum/round_event_control/debris_wave/magicky
+	name = "Magicky debris Wave"
 	weight = 2
 	typepath = /datum/round_event/meteor_wave
 
-/datum/round_event_control/debree_wave/enigma
-	name = "Enignatic Debree Wave"
+/datum/round_event_control/debris_wave/enigma
+	name = "Enignatic debris Wave"
 	weight = 2
 	typepath = /datum/round_event/meteor_wave
 
@@ -236,8 +311,8 @@
 /datum/round_event/dialogue/howitgoing/proc/gift(variant)
 	switch(variant)
 		if(1)
-			GLOB.communications_controller.send_message("Tedious and boring all-round, huh? At least know we are comrades in that. Ugh, here, sending a bunch 'o toys for your crews perusal. Maybe you'll menage to squeeze out some entertainment out of them, haven’t landed well with us.", unique = TRUE)
-
+			GLOB.communications_controller.send_message("Tedious and boring all-round, huh? At least know we are comrades in that. Ugh, here, sending a bunch 'o toys for your crews perusal. Maybe you'll menage to squeeze out some entertainment out of them, haven't landed well with us.", unique = TRUE)
+			send_supply_pod_to_area(contents, /area/station/command/bridge, pod_type = /obj/structure/closet/supplypod)
 			return
 		if(2)
 			GLOB.communications_controller.send_message("Quite the chaos there! My crew is watching it like a good mix of sitcom and action movie. Have some money for the trouble.", unique = TRUE)
@@ -250,4 +325,5 @@
 
 /datum/round_event/dialogue/howitgoing/proc/nt_intervention()
 	priority_announce("The camera footage of the station got leaked, causing a massive security hazard. Though our cybersecurity team acted quickly mitaging major breaches, the source of the breach was traced to your comms console. You will be fined heavily for this.")
-
+	cargo_bank.adjust_money(-8000)
+	SSdynamic.threat_level += 10

@@ -346,6 +346,29 @@
 	icon_state = "robust"
 	base_icon_state = "robust"
 
+/obj/structure/closet/crate/robust/toys
+	name = "robust industries toy crate"
+
+
+/obj/structure/closet/crate/robust/toys/PopulateContents()
+	. = ..()
+	new /obj/item/toy/plush/shark(src)
+	new /obj/item/toy/plush/shark(src)
+	new /obj/item/toy/plush/shark(src)
+	new /obj/item/toy/plush/shark(src)
+	new /obj/item/toy/plush/shark(src)
+	new	/obj/item/clothing/mask/gas/carp(src)
+	new	/obj/item/clothing/mask/gas/carp(src)
+	new	/obj/item/clothing/mask/gas/carp(src)
+	new	/obj/item/clothing/mask/gas/carp(src)
+	new	/obj/item/clothing/mask/gas/carp(src)
+	new /obj/item/clothing/suit/hooded/shark_costume(src)
+	new /obj/item/clothing/suit/hooded/shark_costume(src)
+	new /obj/item/clothing/suit/hooded/shark_costume(src)
+	new /obj/item/clothing/suit/hooded/shark_costume(src)
+	new /obj/item/clothing/suit/hooded/shark_costume(src)
+
+
 /obj/structure/closet/crate/cargo/mining
 	name = "mining crate"
 	icon_state = "mining"

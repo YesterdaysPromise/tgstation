@@ -27,3 +27,9 @@ GLOBAL_LIST_INIT(meteors_stray, list(/obj/effect/meteor/medium=15, /obj/effect/m
 GLOBAL_LIST_INIT(meteors_sandstorm, list(/obj/effect/meteor/sand=45, /obj/effect/meteor/dust=5)) //for sandstorm event
 
 GLOBAL_LIST_INIT(meteorsSPOOKY, list(/obj/effect/meteor/pumpkin=1))
+
+GLOBAL_LIST_INIT(meteors_debris_generic, list(/obj/effect/meteor/pumpkin=1))
+
+GLOBAL_LIST_INIT(meteors_debris_nt, list(/obj/effect/meteor/pumpkin=1))
+
+GLOBAL_LIST_INIT(meteors_debris_syndicate, list(/obj/effect/meteor/pumpkin=1))

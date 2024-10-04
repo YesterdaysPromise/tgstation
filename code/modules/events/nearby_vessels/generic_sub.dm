@@ -27,11 +27,12 @@
 	var/list/debris_type
 	var/debris_name = "generic"
 	///overall 'cost' of the items we throw at the station.
-	var/item_bank = 10 + rand(5, 10)
+	var/item_bank = 10
 	/// cost deducted on the throw.
 	var/item_spendings = 1
 	/// the item we are throwing.
-	var/item
+	var/obj/item
+	var/selected_item
 	///
 	var/turf/item_spawn
 	var/turf/item_target
@@ -58,6 +59,13 @@
 					debris_type += GLOB.meteors_debris_generic
 				else
 					debris_type += GLOB.meteors_debris_nt
+		if("clown")
+			debris_type = GLOB.meteors_debris_clown
+			if(STATION_TIME_PASSED() > 25 MINUTES)
+				if(prob(60))
+					debris_type += GLOB.meteors_debris_generic
+				else
+					debris_type += GLOB.meteors_debris_nt
 		if("syndicate")
 			debris_type = GLOB.meteors_debris_syndicate
 			if(STATION_TIME_PASSED() > 25 MINUTES)
@@ -70,12 +78,14 @@
 			debris_type = GLOB.meteors_debris_generic
 			if(STATION_TIME_PASSED() > 25 MINUTES)
 				debris_type += GLOB.meteors_debris_generic
-	if("techy")
+	if(debris_name == "techy")
 		item_bank += 5
 	if(STATION_TIME_PASSED() > 10 MINUTES)
 		item_bank += 5
 	if(STATION_TIME_PASSED() > 30 MINUTES)
 		item_bank += 5
+
+	item_bank += rand(5, 10)
 
 /datum/round_event/debris_wave/tick()
 	if(ISMULTIPLE(activeFor, 3))
@@ -96,35 +106,38 @@
 			switch(debris_name)
 				if("nanotrasen")
 					if(prob(0.1) || item_spendings > 4)
-						item = spawn_item(item_spawn, /obj/item/banner)
+						item = new /obj/item/banner (item_spawn)
 						item_spendings -= 5
-					else if(prob(25) || item_spending > 2)
-						item = spawn_item(item_spawn, pick(list()))
+					else if(prob(25) || item_spendings > 2)
+						selected_item = pick(debris_list.rare)
+						item =  new selected_item (item_spawn)
 						item_spendings -= 3
-					else if(prob(50) || item_spending > 1)
-						item = spawn_item(item_spawn, pick(list()))
+					else if(prob(50) || item_spendings > 1)
+						selected_item = pick(debris_list.uncommon)
+						item =  new selected_item (item_spawn)
 						item_spendings -= 2
 					else
-						item = spawn_item(item_spawn, pick(list()))
+						selected_item = pick(debris_list.common)
+						item = new selected_item (item_spawn)
 						item_spendings -= 1
 
-			item.throw_at(target, 3, 3, spin = FALSE)
+			item.throw_at(item_target, 3, 3, spin = FALSE)
+
+/datum/debris
+	var/common
+	var/uncommon
+	var/rare
 
 /datum/round_event_control/debris_wave/generic
 	name = "Generic debris Wave"
-	typepath = /datum/round_event/meteor_wave
+	typepath = /datum/round_event/debris_wave/generic
 
-/datum/round_event_control/debris_wave/techy
-	name = "Techy debris Wave"
-	typepath = /datum/round_event/meteor_wave
+/datum/round_event/debris_wave/generic
+	debris_name = "generic"
+	debris_list = /datum/debris/generic
 
-/datum/round_event_control/debris_wave/nanotrasen
-	name = "Nanotrasen debris Wave"
-	typepath = /datum/round_event/meteor_wave
-
-
-/datum/debris/nanotrasen/common
-	loot_list = (/obj/item/stack/sheet/iron/fifty = 1,
+/datum/debris/generic
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
 		/obj/effect/mob_spawn/corpse/human/assistant = 1,
 		/obj/item/storage/toolbox/emergency = 1,
 		/obj/structure/closet = 2,
@@ -134,18 +147,78 @@
 		/obj/item/stack/sheet/iron/twenty = 3,
 		/obj/item/paper_bin = 4,
 	)
-
-/datum/debris/nanotrasen/unommon
-	loot_list = (/obj/item/card/id/advanced/technician_id = 1,
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
 		/obj/item/assembly/flash = 1,
 		/obj/item/stack/rods/fifty = 1,
 		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
 		/obj/item/stack/sheet/plasteel/twenty = 2,
 		/obj/item/stack/rods/twentyfive = 3,
 	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
 
-/datum/debris/nanotrasen/rare
-	loot_list = (/obj/item/tank/jetpack/carbondioxide = 0.1,
+/datum/round_event_control/debris_wave/techy
+	name = "Techy debris Wave"
+	typepath = /datum/round_event/debris_wave/techy
+
+/datum/round_event/debris_wave/techy
+	debris_name = "techy"
+	debris_list = /datum/debris/techy
+
+/datum/debris/techy
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
+
+/datum/round_event_control/debris_wave/nanotrasen
+	name = "Nanotrasen debris Wave"
+	typepath = /datum/round_event/debris_wave/nanotrasen
+
+/datum/round_event/debris_wave/nanotrasen
+	debris_name = "nanotrasen"
+	debris_list = /datum/debris/nanotrasen
+
+/datum/debris/nanotrasen
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
 		/obj/item/gun/energy/e_gun/mini = 0.9,
 		/obj/item/stack/tile/carpet/executive/thirty = 2,
 		/obj/item/relic = 2,
@@ -156,22 +229,130 @@
 	weight = 6
 	typepath = /datum/round_event/meteor_wave
 
+/datum/round_event/debris_wave/clown
+	debris_name = "clown"
+	debris_list = /datum/debris/clown
+
+/datum/debris/clown
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
+
 /datum/round_event_control/debris_wave/syndicate
 	name = "Syndicate debris Wave"
 	weight = 4
-	typepath = /datum/round_event/meteor_wave
+	typepath = /datum/round_event/debris_wave/syndicate
+
+/datum/round_event/debris_wave/syndicate
+	debris_name = "syndicate"
+	debris_list = /datum/debris/syndicate
+
+/datum/debris/syndicate
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
 
 /datum/round_event_control/debris_wave/magicky
 	name = "Magicky debris Wave"
 	weight = 2
-	typepath = /datum/round_event/meteor_wave
+	typepath = /datum/round_event/debris_wave/magicky
 
-/datum/round_event_control/debris_wave/enigma
+/datum/round_event/debris_wave/magicky
+	debris_list = /datum/debris/magicky
+
+/datum/debris/magicky
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
+
+/datum/round_event_control/debris_wave/enigmatic
 	name = "Enignatic debris Wave"
 	weight = 2
-	typepath = /datum/round_event/meteor_wave
+	typepath = /datum/round_event/debris_wave/enigmatic
 
+/datum/round_event/debris_wave/enigmatic
+	debris_list = /datum/debris/enigmatic
 
+/datum/debris/enigmatic
+	common = list(/obj/item/stack/sheet/iron/fifty = 1,
+		/obj/effect/mob_spawn/corpse/human/assistant = 1,
+		/obj/item/storage/toolbox/emergency = 1,
+		/obj/structure/closet = 2,
+		/obj/structure/closet/crate = 2,
+		/obj/item/tank/internals/emergency_oxygen = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/stack/sheet/iron/twenty = 3,
+		/obj/item/paper_bin = 4,
+	)
+	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
+		/obj/item/assembly/flash = 1,
+		/obj/item/stack/rods/fifty = 1,
+		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
+		/obj/item/stack/sheet/plasteel/twenty = 2,
+		/obj/item/stack/rods/twentyfive = 3,
+	)
+	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
+		/obj/item/gun/energy/e_gun/mini = 0.9,
+		/obj/item/stack/tile/carpet/executive/thirty = 2,
+		/obj/item/relic = 2,
+	)
 
 ///This one should go last because its bit wordy. Dialogue, duh.
 
@@ -185,7 +366,6 @@
 	category = EVENT_CATEGORY_SPACE
 	description = "A series of nearby vessel sub events which send dialogues to comms console of the station. Some answers lead to rewards, some, to punishments."
 
-
 /// How is it going?
 /datum/round_event_control/dialogue/howitgoing
 	typepath = /datum/round_event/dialogue/howitgoing
@@ -193,7 +373,6 @@
 /datum/round_event/dialogue/howitgoing
 	var/datum/comm_message/dialogue
 	var/malice = 25
-
 /datum/round_event/dialogue/howitgoing/announce(fake)
 	priority_announce("Incoming subspace communication. Secure channel opened at all communication consoles.", "Incoming Message", SSstation.announcer.get_rand_report_sound())
 
@@ -276,7 +455,7 @@
 		if(2)
 			malice+=10
 			if(prob(malice))
-				addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
+				addtimer(CALLBACK(src, PROC_REF(nt_intervention), rand(5, 20) MINUTES))
 
 /datum/round_event/dialogue/howitgoing/proc/dissapointment()
 	dialogue = new("This... Seems rather boring to me. Are you even more boring normally, or what? Put it on my telescreens and my crew claims they'd prefer static...", list("Sorry, I guess.","Better than nothing, no?"))
@@ -290,12 +469,12 @@
 			if(prob(50))
 				malice -= 5
 			if(prob(malice))
-				addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
+				addtimer(CALLBACK(src, PROC_REF(nt_intervention), rand(5, 20) MINUTES))
 		if(2)
 			if(prob(20))
 				malice -= 20
 			if(prob(malice))
-				addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
+				addtimer(CALLBACK(src, PROC_REF(nt_intervention), rand(5, 20) MINUTES))
 
 /datum/round_event/dialogue/howitgoing/proc/dead_end(variant)
 	switch(variant)
@@ -309,10 +488,11 @@
 			GLOB.communications_controller.send_message("Damn it, somethings interfering with the feed transfer. Unlucky I guess... Well, can't do much with this static, will have to figure something else to entertain the crew. Still, thanks.", unique = TRUE)
 
 /datum/round_event/dialogue/howitgoing/proc/gift(variant)
+	var/datum/bank_account/cargo_bank = SSeconomy.get_dep_account(ACCOUNT_CAR)
 	switch(variant)
 		if(1)
 			GLOB.communications_controller.send_message("Tedious and boring all-round, huh? At least know we are comrades in that. Ugh, here, sending a bunch 'o toys for your crews perusal. Maybe you'll menage to squeeze out some entertainment out of them, haven't landed well with us.", unique = TRUE)
-			send_supply_pod_to_area(contents, /area/station/command/bridge, pod_type = /obj/structure/closet/supplypod)
+			send_supply_pod_to_area(/obj/structure/closet/crate/robust/toys, /area/station/command/bridge, pod_type = /obj/structure/closet/supplypod)
 			return
 		if(2)
 			GLOB.communications_controller.send_message("Quite the chaos there! My crew is watching it like a good mix of sitcom and action movie. Have some money for the trouble.", unique = TRUE)
@@ -321,9 +501,10 @@
 			GLOB.communications_controller.send_message("You got all that going on and still menage to send a message, huh? Quite admirable. Here, have the payment for the entertainment... and to repair the damages..", unique = TRUE)
 			cargo_bank.adjust_money(5000)
 	if(prob(malice))
-		addtimer(CALLBACK(src, ROC_REF(nt_intervention), rand(5, 20) MINUTES))
+		addtimer(CALLBACK(src, PROC_REF(nt_intervention), rand(5, 20) MINUTES))
 
 /datum/round_event/dialogue/howitgoing/proc/nt_intervention()
+	var/datum/bank_account/cargo_bank = SSeconomy.get_dep_account(ACCOUNT_CAR)
 	priority_announce("The camera footage of the station got leaked, causing a massive security hazard. Though our cybersecurity team acted quickly mitaging major breaches, the source of the breach was traced to your comms console. You will be fined heavily for this.")
 	cargo_bank.adjust_money(-8000)
 	SSdynamic.threat_level += 10

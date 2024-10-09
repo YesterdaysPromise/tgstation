@@ -572,7 +572,7 @@
 	//Cooldown length. Randomly determined at activation if it isn't determined here.
 	var/cooldown_timer
 	COOLDOWN_DECLARE(cooldown)
-	//What visual theme this artefact has. Current possible choices: "prototype", "necrotech"
+	//What visual theme this artefact has. Current possible choices: "prototype", "necrotech", "suspicious"
 	var/artifact_theme = "prototype"
 	var/datum/effect_system/spark_spread/sparks
 
@@ -602,11 +602,20 @@
 		themed_name_suffix = pick("instrument","shard","fetish","bibelot","trinket","offering","relic")
 		real_name = "[pick(themed_name_prefix)] [pick(themed_name_suffix)]"
 		name = "strange relic"
+	if(artifact_theme == "suspicious")
+		icon_state = pick("synditech1", "synditech2", "synditech3", "synditech4", "synditech5", "synditech6")
+		themed_name_prefix = pick("potentialy explosive","suspicious","illict","bizzare","syndicate-made","unpatended","dangerous")
+		themed_name_suffix = pick("weapon prototype","machine","gadget","contraption","invention","contraband technology","object")
+		real_name = "[pick(themed_name_prefix)] [pick(themed_name_suffix)]"
+		name = "strange [pick(themed_name_suffix)]"
 	update_appearance()
 
 /obj/item/relic/lavaland
 	name = "strange relic"
 	artifact_theme = "necrotech"
+
+/obj/item/relic/syndicate
+	artifact_theme = "syndicate"
 
 /obj/item/relic/proc/reveal()
 	if(activated) //no rerolling
@@ -616,21 +625,29 @@
 	if(!cooldown_timer)
 		cooldown_timer = rand(min_cooldown, max_cooldown)
 	if(!hidden_power)
-		hidden_power = pick(
-			PROC_REF(corgi_cannon),
-			PROC_REF(cleaning_foam),
-			PROC_REF(flashbanger),
-			PROC_REF(summon_animals),
-			PROC_REF(uncontrolled_teleport),
-			PROC_REF(heat_and_explode),
-			PROC_REF(rapid_self_dupe),
-			PROC_REF(drink_dispenser),
-			PROC_REF(tummy_ache),
-			PROC_REF(charger),
-			PROC_REF(hugger),
-			PROC_REF(dimensional_shift),
-			PROC_REF(disguiser),
-			)
+		if(artifact_theme != "suspicious")
+			hidden_power = pick(
+				PROC_REF(corgi_cannon),
+				PROC_REF(cleaning_foam),
+				PROC_REF(flashbanger),
+				PROC_REF(summon_animals),
+				PROC_REF(uncontrolled_teleport),
+				PROC_REF(heat_and_explode),
+				PROC_REF(rapid_self_dupe),
+				PROC_REF(drink_dispenser),
+				PROC_REF(tummy_ache),
+				PROC_REF(charger),
+				PROC_REF(hugger),
+				PROC_REF(dimensional_shift),
+				PROC_REF(disguiser),
+				)
+		else
+			hidden_power = pick(
+				PROC_REF(flashbanger),
+				PROC_REF(uncontrolled_teleport),
+				PROC_REF(heat_and_explode),
+				PROC_REF(disguiser),
+				)
 
 /obj/item/relic/attack_self(mob/user)
 	if(!activated)
@@ -898,6 +915,29 @@
 	new_costume = new new_costume()
 	new_costume.item_flags |= DROPDEL
 	return new_costume
+
+
+///makes the relic appear to be a different item for a minute or two.
+/obj/item/relic/proc/chameleon(mob/user)
+	var/save_name = name
+	var/save_icon = icon_state
+
+	name = "combat software upgrade"
+	desc = "A highly illegal, highly dangerous upgrade for artificial intelligence units, granting them a variety of powers as well as the ability to hack APCs.<br>This upgrade does not override any active laws, and must be applied directly to an active AI core."
+	icon = 'icons/obj/devices/circuitry_n_data.dmi'
+	icon_state = "datadisk3"
+
+	update_appearance()
+
+	addtimer(CALLBACK(src, PROC_REF(unchameleon(save_name, save_icon)), rand(1, 2) MINUTES))
+
+/obj/item/relic/proc/unchameleon(var/save_name, var/save_icon)
+	name = save_name
+	desc = "What mysteries could this hold? Maybe Research & Development could find out."
+	icon = 'icons/obj/devices/artefacts.dmi'
+	icon_state = save_icon
+
+
 
 //Admin Warning proc for relics
 /obj/item/relic/proc/warn_admins(mob/user, relic_type, priority = 1)

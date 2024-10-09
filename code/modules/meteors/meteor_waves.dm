@@ -32,4 +32,6 @@ GLOBAL_LIST_INIT(meteors_debris_generic, list(/obj/effect/meteor/pumpkin=1))
 
 GLOBAL_LIST_INIT(meteors_debris_nt, list(/obj/effect/meteor/pumpkin=1))
 
+GLOBAL_LIST_INIT(meteors_debris_clown, list(/obj/effect/meteor/pumpkin=1))
+
 GLOBAL_LIST_INIT(meteors_debris_syndicate, list(/obj/effect/meteor/pumpkin=1))

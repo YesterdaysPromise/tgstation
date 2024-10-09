@@ -103,23 +103,22 @@
 			item_spawn = get_edge_target_turf()
 			item_target = get_random_station_turf()
 
-			switch(debris_name)
-				if("nanotrasen")
-					if(prob(0.1) || item_spendings > 4)
-						item = new /obj/item/banner (item_spawn)
-						item_spendings -= 5
-					else if(prob(25) || item_spendings > 2)
-						selected_item = pick(debris_list.rare)
-						item =  new selected_item (item_spawn)
-						item_spendings -= 3
-					else if(prob(50) || item_spendings > 1)
-						selected_item = pick(debris_list.uncommon)
-						item =  new selected_item (item_spawn)
-						item_spendings -= 2
-					else
-						selected_item = pick(debris_list.common)
-						item = new selected_item (item_spawn)
-						item_spendings -= 1
+
+			if(prob(0.1) || item_spendings > 4)
+				item = new /obj/item/banner (item_spawn)
+				item_spendings -= 5
+			else if(prob(25) || item_spendings > 2)
+				selected_item = pick(debris_list.rare)
+				item =  new selected_item (item_spawn)
+				item_spendings -= 3
+			else if(prob(50) || item_spendings > 1)
+				selected_item = pick(debris_list.uncommon)
+				item =  new selected_item (item_spawn)
+				item_spendings -= 2
+			else
+				selected_item = pick(debris_list.common)
+				item = new selected_item (item_spawn)
+				item_spendings -= 1
 
 			item.throw_at(item_target, 3, 3, spin = FALSE)
 
@@ -127,6 +126,7 @@
 	var/common
 	var/uncommon
 	var/rare
+	var/legendary
 
 /datum/round_event_control/debris_wave/generic
 	name = "Generic debris Wave"
@@ -159,6 +159,7 @@
 		/obj/item/stack/tile/carpet/executive/thirty = 2,
 		/obj/item/relic = 2,
 	)
+	legendary = (/obj/item/banner)
 
 /datum/round_event_control/debris_wave/techy
 	name = "Techy debris Wave"
@@ -170,27 +171,36 @@
 
 /datum/debris/techy
 	common = list(/obj/item/stack/sheet/iron/fifty = 1,
-		/obj/effect/mob_spawn/corpse/human/assistant = 1,
-		/obj/item/storage/toolbox/emergency = 1,
-		/obj/structure/closet = 2,
-		/obj/structure/closet/crate = 2,
-		/obj/item/tank/internals/emergency_oxygen = 3,
-		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/wallframe/camera = 1,
+		/obj/item/electronics/airlock = 1,
+		/obj/item/stock_parts/capacitor/adv = 1,
+		/obj/item/stock_parts/micro_laser/high = 1,
+		/obj/item/stock_parts/servo/nano = 1,
+		/obj/item/radio = 2,
+		/obj/item/assembly/voice = 2,
+		/obj/item/assembly/signaler = 2,
+		/obj/item/assembly/timer = 2,
 		/obj/item/stack/sheet/iron/twenty = 3,
-		/obj/item/paper_bin = 4,
+		/obj/item/stack/sticky_tape = 3,
+
 	)
-	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
-		/obj/item/assembly/flash = 1,
-		/obj/item/stack/rods/fifty = 1,
-		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
-		/obj/item/stack/sheet/plasteel/twenty = 2,
-		/obj/item/stack/rods/twentyfive = 3,
+	uncommon = list(/obj/item/relic = 1,
+		/obj/structure/closet/crate/decorations = 1,
+		/obj/item/solar_assembly = 1,
+		/obj/structure/reagent_dispensers/fueltank = 1,
+		/obj/item/weldingtool/largetank = 1,
+		/obj/item/stock_parts/micro_laser/ultra = 1,
+		/obj/item/storage/toolbox/mechanical = 2,
+		/obj/item/stock_parts/scanning_module/phasic = 2,
 	)
-	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
-		/obj/item/gun/energy/e_gun/mini = 0.9,
-		/obj/item/stack/tile/carpet/executive/thirty = 2,
-		/obj/item/relic = 2,
+	rare = list(
+		/obj/item/wrench/caravan = 0.5,
+		/obj/item/wirecutters/caravan = 0.5,
+		/obj/item/crowbar/mechremoval = 1,
+		/obj/item/screwdriver/power = 1,
+		/obj/item/weldingtool/experimental = 1,
 	)
+	legendary = (/obj/item/construction/rcd/loaded/upgraded)
 
 /datum/round_event_control/debris_wave/nanotrasen
 	name = "Nanotrasen debris Wave"
@@ -223,6 +233,7 @@
 		/obj/item/stack/tile/carpet/executive/thirty = 2,
 		/obj/item/relic = 2,
 	)
+	legendary = (/obj/item/banner)
 
 /datum/round_event_control/debris_wave/clown
 	name = "Clown debris Wave"
@@ -234,28 +245,31 @@
 	debris_list = /datum/debris/clown
 
 /datum/debris/clown
-	common = list(/obj/item/stack/sheet/iron/fifty = 1,
-		/obj/effect/mob_spawn/corpse/human/assistant = 1,
-		/obj/item/storage/toolbox/emergency = 1,
-		/obj/structure/closet = 2,
-		/obj/structure/closet/crate = 2,
-		/obj/item/tank/internals/emergency_oxygen = 3,
-		/obj/item/stack/sheet/mineral/plasma/five = 3,
-		/obj/item/stack/sheet/iron/twenty = 3,
-		/obj/item/paper_bin = 4,
+	common = list(/obj/item/grown/bananapeel/bluespace = 1,
+		/obj/effect/mob_spawn/corpse/human/clown = 1,
+		/obj/item/food/pie/cream = 1,
+		/obj/item/dnainjector/clumsymut = 1,
+		/obj/item/dnainjector/wackymut = 2,
+		/obj/item/clothing/mask/gas/clown_hat = 2,
+		/obj/item/toy/balloon_animal/nukie = 2,
+		/obj/item/toy/balloon_animal/banana = 2,
+		/obj/item/toy/balloon_animal/clown = 2,
+		/obj/item/grown/bananapeel = 3,
+		/obj/item/instrument/bikehorn = 3,
 	)
-	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
-		/obj/item/assembly/flash = 1,
-		/obj/item/stack/rods/fifty = 1,
-		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
-		/obj/item/stack/sheet/plasteel/twenty = 2,
+	uncommon = list(/obj/item/storage/box/balloons = 1,
+		/obj/item/reagent_containers/spray/waterflower/superlube = 1,
+		/obj/item/pneumatic_cannon/pie = 1,
+		/obj/item/stack/sheet/cloth/ten = 2,
+		/obj/item/stack/sheet/iron/twenty = 2,
 		/obj/item/stack/rods/twentyfive = 3,
 	)
-	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
-		/obj/item/gun/energy/e_gun/mini = 0.9,
-		/obj/item/stack/tile/carpet/executive/thirty = 2,
-		/obj/item/relic = 2,
+	rare = list(/obj/item/stack/ore/bananium = 1,
+		/obj/item/mod/module/balloon = 1,
+		/obj/item/mod/module/visor/rave = 1,
+		/obj/item/balloon_mallet = 2,
 	)
+	legendary = (/obj/item/banner)
 
 /datum/round_event_control/debris_wave/syndicate
 	name = "Syndicate debris Wave"
@@ -285,10 +299,9 @@
 		/obj/item/stack/rods/twentyfive = 3,
 	)
 	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
-		/obj/item/gun/energy/e_gun/mini = 0.9,
-		/obj/item/stack/tile/carpet/executive/thirty = 2,
-		/obj/item/relic = 2,
+		/obj/item/relic/synicate = 3,
 	)
+	legendary = (/obj/item/banner)
 
 /datum/round_event_control/debris_wave/magicky
 	name = "Magicky debris Wave"
@@ -321,6 +334,7 @@
 		/obj/item/stack/tile/carpet/executive/thirty = 2,
 		/obj/item/relic = 2,
 	)
+	legendary = (/obj/item/banner)
 
 /datum/round_event_control/debris_wave/enigmatic
 	name = "Enignatic debris Wave"
@@ -353,6 +367,7 @@
 		/obj/item/stack/tile/carpet/executive/thirty = 2,
 		/obj/item/relic = 2,
 	)
+	legendary = (/obj/item/banner)
 
 ///This one should go last because its bit wordy. Dialogue, duh.
 

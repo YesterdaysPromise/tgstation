@@ -312,29 +312,29 @@
 	debris_list = /datum/debris/magicky
 
 /datum/debris/magicky
-	common = list(/obj/item/stack/sheet/iron/fifty = 1,
-		/obj/effect/mob_spawn/corpse/human/assistant = 1,
-		/obj/item/storage/toolbox/emergency = 1,
-		/obj/structure/closet = 2,
-		/obj/structure/closet/crate = 2,
-		/obj/item/tank/internals/emergency_oxygen = 3,
-		/obj/item/stack/sheet/mineral/plasma/five = 3,
-		/obj/item/stack/sheet/iron/twenty = 3,
-		/obj/item/paper_bin = 4,
-	)
-	uncommon = list(/obj/item/card/id/advanced/technician_id = 1,
-		/obj/item/assembly/flash = 1,
-		/obj/item/stack/rods/fifty = 1,
+	common = list(/obj/item/stack/sheet/mineral/adamantine = 1,
+		/obj/item/stack/sheet/mineral/silver/five = 2,
+		/obj/item/stack/sheet/mineral/gold/five = 2,
 		/obj/item/stack/sheet/mineral/plasma/thirty = 2,
-		/obj/item/stack/sheet/plasteel/twenty = 2,
-		/obj/item/stack/rods/twentyfive = 3,
+		/obj/item/stack/sheet/mineral/uranium/five = 2,
+		/obj/item/clothing/shoes/sandal = 2,
+		/obj/item/stack/sheet/iron/fifty = 3,
+		/obj/item/stack/sheet/mineral/plasma/five = 3,
+		/obj/item/storage/bag/ore = 3,
 	)
-	rare = list(/obj/item/tank/jetpack/carbondioxide = 0.1,
-		/obj/item/gun/energy/e_gun/mini = 0.9,
-		/obj/item/stack/tile/carpet/executive/thirty = 2,
-		/obj/item/relic = 2,
+	uncommon = list(/obj/item/clothing/suit/wizrobe = 1,
+		/obj/item/gun/magic/wand/nothing = 1,
+		/obj/item/kinetic_crusher = 2,
+		/obj/item/gun/energy/recharge/kinetic_accelerator = 2,
+		/obj/item/clothing/glasses/meson = 2,
+		/obj/item/stack/sheet/bronze = 2,
 	)
-	legendary = (/obj/item/banner)
+	rare = list(/obj/item/stack/sheet/mineral/runite = 1,
+		/obj/item/stack/ore/bananium = 1,
+		/obj/item/stack/sheet/mineral/metal_hydrogen = 1,
+		/obj/item/clothing/head/wizard = 2,
+	)
+	legendary = (/obj/item/stack/sheet/mineral/mythril)
 
 /datum/round_event_control/debris_wave/enigmatic
 	name = "Enignatic debris Wave"

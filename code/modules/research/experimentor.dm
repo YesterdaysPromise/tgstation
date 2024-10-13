@@ -647,6 +647,8 @@
 				PROC_REF(uncontrolled_teleport),
 				PROC_REF(heat_and_explode),
 				PROC_REF(disguiser),
+				PROC_REF(chameleon),
+				PROC_REF(lead_halo),
 				)
 
 /obj/item/relic/attack_self(mob/user)
@@ -921,15 +923,19 @@
 /obj/item/relic/proc/chameleon(mob/user)
 	var/save_name = name
 	var/save_icon = icon_state
+	var/obj/fake_item = pick(list(
+		/obj/item/malf_upgrade,
+		/obj/item/disk/nuclear,
+		/obj/item/gun/energy/laser/captain,
+	))
 
-	name = "combat software upgrade"
-	desc = "A highly illegal, highly dangerous upgrade for artificial intelligence units, granting them a variety of powers as well as the ability to hack APCs.<br>This upgrade does not override any active laws, and must be applied directly to an active AI core."
-	icon = 'icons/obj/devices/circuitry_n_data.dmi'
-	icon_state = "datadisk3"
+	name = fake_item::name
+	desc = fake_item::desc
+	icon = fake_item::icon
+	icon_state = fake_item::icon_state
 
 	update_appearance()
-
-	addtimer(CALLBACK(src, PROC_REF(unchameleon(save_name, save_icon)), rand(1, 2) MINUTES))
+	addtimer(CALLBACK(src, PROC_REF(unchameleon) save_name, save_icon), rand(1, 2) MINUTES)
 
 /obj/item/relic/proc/unchameleon(var/save_name, var/save_icon)
 	name = save_name
@@ -937,7 +943,14 @@
 	icon = 'icons/obj/devices/artefacts.dmi'
 	icon_state = save_icon
 
-
+/obj/item/relic/proc/leadhalo(mob/user)
+	playsound(src, SFX_REVOLVER_SPIN, rand(25,50), TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+	if(prob(99))
+		var/obj/item/grenade/stingbang/spawned_stingbang = new/obj/item/grenade/stingbang(user.loc)
+	else
+		var/obj/item/grenade/stingbang/spawned_stingbang = new/obj/item/grenade/stingbang/mega(user.loc)
+	spawned_flashbang.detonate()
+	warn_admins(user, "Lead Halo")
 
 //Admin Warning proc for relics
 /obj/item/relic/proc/warn_admins(mob/user, relic_type, priority = 1)

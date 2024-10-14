@@ -309,7 +309,10 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 			cannon_ref = WEAKREF(deploy())
 			. = TRUE
 		if("fire")
-			fire(usr)
+			if(istype(target, /area) || istype(target, /datum/component/gps))
+				fire(usr)
+			else
+				vessel_fire(usr)
 			. = TRUE
 		if("recalibrate")
 			calibrate(usr)
@@ -327,6 +330,11 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	var/list/options = gps_locators
 	if(area_aim)
 		options += GLOB.teleportlocs
+
+	var/datum/round_event/nearby_vessel/neutral/generic/genericship_target = locate(/datum/round_event/nearby_vessel/neutral/generic) in SSevents.running
+	if(genericship_target)
+		options += genericship_target.BSA_target_name
+
 	var/victim = tgui_input_list(user, "Select target", "Artillery Targeting", options)
 	if(isnull(victim))
 		return
@@ -342,6 +350,8 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	else if(istype(target, /datum/component/gps))
 		var/datum/component/gps/G = target
 		return G.gpstag
+	else
+		return target
 
 /obj/machinery/computer/bsa_control/proc/get_impact_turf()
 	if(obj_flags & EMAGGED)
@@ -363,6 +373,96 @@ GLOBAL_VAR_INIT(bsa_unlock, FALSE)
 	notice = null
 	var/turf/target_turf = get_impact_turf()
 	cannon.fire(user, target_turf)
+
+/obj/machinery/computer/bsa_control/proc/vessel_fire(mob/user)
+	var/obj/machinery/bsa/full/cannon = cannon_ref?.resolve()
+	if(!cannon)
+		notice = "No Cannon Exists!"
+		return
+	if(cannon.machine_stat)
+		notice = "Cannon unpowered!"
+		return
+	notice = null
+	var/datum/bank_account/cargo_bank = SSeconomy.get_dep_account(ACCOUNT_CAR)
+
+	var/datum/round_event/nearby_vessel/vessel_target = locate(/datum/round_event/nearby_vessel/neutral/generic) in SSevents.running
+	vessel_target.kill()
+
+	switch(target)
+		if("Nanotrasen Vessel")
+			priority_announce(pick("If we are reading it right, some kind of horrible missfire just happend or you let some idiot fiddle with one of the best station-mounted weapons avaible to us... Guess who will pay for damages?",\
+			"Really, guys, you can't handle a hyperadvanced bluespace artillery cannon properly?! It's not rocket science! Well, it kinda is, but... egh. Off goes your money.",\
+			"Do you have any idea how much paperwork will this little accident cost us? How about we show you by subtracting it straight from you? Someone will have to really answer for this..."), "Nanotrasen Naval Command")
+			cargo_bank.adjust_money(rand(-100000, -50000))
+			if(prob(60))
+				force_event_async(/datum/round_event_control/debris_wave/nanotrasen)
+			else
+				force_event_async(/datum/round_event_control/debris_wave/generic)
+			return
+		if ("Foreign Corporate Entity's Vessel")
+			priority_announce(pick("Your level of idiocy will cost you highly. Do you have any idea how hard it is to sweep 'accidents' like this under the rug?!", \
+			"With a little bit of luck, they will not miss that ship much. With lack therof... You will all be in debt for couple of years to come."), "Nanotrasen Naval Command")
+			cargo_bank.adjust_money(rand(-100000, -25000))
+			if(prob(60))
+				force_event_async(/datum/round_event_control/debris_wave/techy)
+			else
+				force_event_async(/datum/round_event_control/debris_wave/generic)
+			return
+		if ("Spinward Sector's Vessel")
+			priority_announce(pick("Only thing saving your sorry assess is that civillains shouldn't really be here in the first place. The clean-up fee is still on you, though.", \
+			"We'll have to hire Interdyne Corpse Retrival agents for this mess, and they cost us an arm and a leg... Especially if we want those civillains to not remember your little missconduit."), "Nanotrasen Naval Command")
+			cargo_bank.adjust_money(rand(-50000, -10000))
+			force_event_async(/datum/round_event_control/debris_wave/generic)
+			return
+		if ("Syndicate Vessel")
+			priority_announce(pick("A good shot! Don't expect any fanfare though, for all intents and purposes we are 'neutral' with syndicate parties. If anyone asks, this was just an accident.", \
+			"Syndicate Vessel down. For the sake of 'neutrality' and plausible deniability we can't pay you for it... But feel free to 'clear up' any of their scrap coming your way."), "Nanotrasen Naval Command")
+			if(prob(70))
+				force_event_async(/datum/round_event_control/debris_wave/syndicate)
+			else
+				force_event_async(/datum/round_event_control/debris_wave/techy)
+			return
+		if ("Clown Vessel")
+			if(user.job == JOB_MIME)
+				user.client.give_award(/datum/award/achievement/misc/unspeakable_crimes, user)
+			priority_announce(pick("That will require a lot of PR work with the Clown Planet, and it won't be easy... We'll have you pay up for it.", \
+			"Yes, clown vessels often use white and red plating in circular pattern, buy it's because that's what circusses used to look like, not to form a bullseye! It's basics of BSA usage manual!"), "Nanotrasen Naval Command")
+			cargo_bank.adjust_money(rand(-75000, -25000))
+			force_event_async(/datum/round_event_control/debris_wave/clown)
+			return
+		if ("Pirate Vessel")
+			priority_announce(pick("You really didn't have to shoot *someone* with that BSA to test it, you know? But serves those pirates about right. We'll check if there was some bounty on them and transfer you a cut. 15% should suffice?", \
+			"Well-shot. We'll transfer your cut of the bounty for those pirates now."), "Nanotrasen Naval Command")
+			cargo_bank.adjust_money(rand(2500, 7500))
+			if(prob(60))
+				force_event_async(/datum/round_event_control/debris_wave/techy)
+			else
+				force_event_async(/datum/round_event_control/debris_wave/syndicate)
+			return
+		if ("Golem Vessel")
+			priority_announce(pick("You really didn't have to shoot *someone* with that BSA to test it, you know? But serves those pirates about right. We'll check if there was some bounty on them and transfer you a cut. 15% should suffice?", \
+			"Well-shot. We'll transfer your cut of the bounty for those pirates now."), "Nanotrasen Naval Command")
+			cargo_bank.adjust_money(rand(2500, 7500))
+			if(prob(60))
+				force_event_async(/datum/round_event_control/debris_wave/techy)
+			else
+				force_event_async(/datum/round_event_control/debris_wave/magicky)
+			return
+		if ("Uknown Vessel")
+			if(prob(60))
+				priority_announce(pick("Turns out, even from analizing the wreckage we can't tell what the hell that vessel was... No blackbox and not registry so no paperwork to be done at very least, hopefuly. ", \
+			"The strange vessel somehow bloody tanked the shot, but at least you grazed a part of it. We'll try to salvage the thing later; if anything gets to you before that point, its yours."), "Nanotrasen Naval Command")
+				force_event_async(/datum/round_event_control/debris_wave/enigmatic)
+			else
+				if(prob(50))
+					priority_announce(pick("You just shot a *very* expensive prototype cloaking ship we've been developing for the last 30 years... We are smart enough to have a backup or two, and the fact you we are able to shoot it all will provide research data, but... It will cost you."), "Nanotrasen Naval Command")
+					cargo_bank.adjust_money(rand(-100000, -50000))
+					force_event_async(/datum/round_event_control/debris_wave/nanotrasen)
+				else
+					priority_announce(pick("It seems that ship was syndicate-aligned intelligence gatherer. Due to the strengths of its encryption we can only assume it comes from entity known as MI13. More-over... it seems like its destruction initiated a Ion Purge, brace for impact. Here's to cover for it."), "Nanotrasen Naval Command")
+					cargo_bank.adjust_money(rand(2500, 5000))
+					force_event_async(/datum/round_event_control/debris_wave/syndicate)
+			return
 
 /obj/machinery/computer/bsa_control/proc/deploy(force=FALSE)
 	var/obj/machinery/bsa/full/prebuilt = locate() in range(7) //In case of adminspawn

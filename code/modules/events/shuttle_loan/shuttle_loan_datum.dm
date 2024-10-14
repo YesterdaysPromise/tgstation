@@ -214,6 +214,38 @@
 		var/turf/web_turf = pick_n_take(empty_shuttle_turfs)
 		new /obj/structure/spider/stickyweb(web_turf)
 
+/**
+ * Series of gifts from nearby vessels
+ */
+
+
+
+/datum/shuttle_loan_situation/spider_gift
+	sender = "CentCom Diplomatic Corps"
+	announcement_text = "The Spider Clan has sent us a mysterious gift. Can we ship it to you to see what's inside?"
+	shuttle_transit_text = "Spider Clan gift incoming."
+	logging_desc = "Shuttle full of spiders"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * A special shuttle loan situation enabled by the 'mail blocked' station trait.
+ * It sends back a lot of mail to the station, at the cost of wrecking the cargo shuttle a little.
+ */
+
 #define DENT_WALL "dent"
 #define CHANGE_WALL "change"
 #define DISMANTLE_WALL "dismantle"
@@ -222,10 +254,7 @@
 #define PLATING_TILE "plating"
 #define RUST_TILE "rust"
 
-/**
- * A special shuttle loan situation enabled by the 'mail blocked' station trait.
- * It sends back a lot of mail to the station, at the cost of wrecking the cargo shuttle a little.
- */
+
 /datum/shuttle_loan_situation/mail_strike
 	sender = "Spinward Mail Workers Union"
 	announcement_text = "The Mail Workers Union wants to borrow your cargo shuttle to employ \"advanced union strike tactics\" with. Payment is strictly in mails."

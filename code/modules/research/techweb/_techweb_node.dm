@@ -34,12 +34,27 @@
 	var/category = "Misc"
 	/// The list of experiments required to research the node
 	var/list/required_experiments = list()
-	/// If completed, these experiments give a specific point amount discount to the node.area
+	/// If completed, these experiments give a specific point amount discount to the node.
 	var/list/discount_experiments = list()
+	/// Boost quantities from non-experiment sources (i.e., toxins papers).
+	/// Indexed by point type to boost amount (with only one boost per point type).
+	var/list/discount_boosts = list()
+	/// Boolean indicating whether or not this node is boosted by non-experiments.
+	/// This will need to be changed to a list of point types boosted if boosts
+	/// should ever need to vary by point type.
+	var/discount_boosted = FALSE
 	/// When this node is completed, allows these experiments to be performed.
 	var/list/experiments_to_unlock = list()
 	/// Whether or not this node should show on the wiki
 	var/show_on_wiki = TRUE
+	/// Hidden Mech nodes unlocked when mech fabricator emaged.
+	var/illegal_mech_node = FALSE
+	/**
+	 * If set, the researched node will be announced on these channels by an announcement system
+	 * with 'announce_research_node' set to TRUE when researched by the station.
+	 * Not every node has to be announced if you want, some are best kept a little "subtler", like Illegal Weapons.
+	 */
+	var/list/announce_channels
 
 /datum/techweb_node/error_node
 	id = "ERROR"
@@ -84,18 +99,37 @@
 			if(host.completed_experiments[experiment_type]) //do we have this discount_experiment unlocked?
 				actual_costs[cost_type] -= discount_experiments[experiment_type]
 
-	if(host.boosted_nodes[id]) // Boosts should be subservient to experiments. Discount from boosts are capped when costs fall below 250.
-		var/list/boostlist = host.boosted_nodes[id]
-		for(var/booster in boostlist)
+	if(discount_boosts && discount_boosted) // Boosts should be subservient to experiments.
+		for(var/booster in discount_boosts)
 			if(actual_costs[booster])
-				var/delta = max(0, actual_costs[booster] - 250)
-				actual_costs[booster] -= min(boostlist[booster], delta)
+				actual_costs[booster] = max(actual_costs[booster] - discount_boosts[booster], 0)
 
 	return actual_costs
+
+/datum/techweb_node/proc/is_free(datum/techweb/host)
+	var/list/costs = get_price(host)
+	var/total_points = 0
+
+	for(var/point_type in costs)
+		total_points += costs[point_type]
+
+	if(total_points == 0)
+		return TRUE
+	return FALSE
 
 /datum/techweb_node/proc/price_display(datum/techweb/TN)
 	return techweb_point_display_generic(get_price(TN))
 
 ///Proc called when the Station (Science techweb specific) researches a node.
-/datum/techweb_node/proc/on_station_research()
-	SHOULD_CALL_PARENT(FALSE)
+/datum/techweb_node/proc/on_station_research(atom/research_source)
+	SHOULD_CALL_PARENT(TRUE)
+	var/channels_to_use = announce_channels
+	if(istype(research_source, /obj/machinery/computer/rdconsole))
+		var/obj/machinery/computer/rdconsole/console = research_source
+		var/obj/item/circuitboard/computer/rdconsole/board = console.circuit
+		if(board.silence_announcements)
+			return
+		if(board.obj_flags & EMAGGED)
+			channels_to_use = list(RADIO_CHANNEL_COMMON)
+	if(length(channels_to_use) && !starting_node)
+		aas_config_announce(/datum/aas_config_entry/researched_node, list("NODE" = display_name), null, channels_to_use)

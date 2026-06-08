@@ -1,16 +1,23 @@
+#define BONUS_MATS_MINIMUM 1
+#define BONUS_MATS_MAXIMUM 5
+
 ///Boulders with special artificats that can give higher mining points
 /obj/item/boulder/artifact
 	name = "artifact boulder"
 	desc = "This boulder is brimming with strange energy. Cracking it open could contain something unusual for science."
 	icon_state = "boulder_artifact"
 	/// This is the type of item that will be inside the boulder. Default is a strange object.
-	var/artifact_type = /obj/item/relic
+	var/artifact_type = /obj/item/relic/lavaland
 	/// References to the relic inside the boulder, if any.
 	var/obj/item/artifact_inside
+	/// Bonus materials to add to this boulder, in addition to existing materials created by the ore vent.
+	var/datum/material/bonus_mat
 
 /obj/item/boulder/artifact/Initialize(mapload)
 	. = ..()
 	artifact_inside = new artifact_type(src) /// This could be poggers for archaeology in the future.
+	if(bonus_mat)
+		add_bonus_mats()
 
 /obj/item/boulder/artifact/Destroy(force)
 	QDEL_NULL(artifact_inside)
@@ -25,6 +32,27 @@
 	artifact_inside = null
 	return ..()
 
+/obj/item/boulder/artifact/update_icon_state()
+	. = ..()
+	icon_state = initial(icon_state) // Hardset to artifact sprites for consistency
+
+/// Adds a random amount of material to an artifact boulder, determined by BONUS_MAT defines and of the type bonus_mat defined on the boulder.
+/obj/item/boulder/artifact/proc/add_bonus_mats()
+	var/list/bonus_mats = list()
+	if(custom_materials)
+		bonus_mats = custom_materials.Copy()
+	bonus_mats[bonus_mat] += rand(BONUS_MATS_MINIMUM, BONUS_MATS_MAXIMUM) * SHEET_MATERIAL_AMOUNT
+	set_custom_materials(bonus_mats)
+
+
+/obj/item/boulder/artifact/bluespace
+	icon_state = "boulder_artifact_BS"
+	bonus_mat = /datum/material/bluespace
+
+/obj/item/boulder/artifact/diamond
+	icon_state = "boulder_artifact_diamond"
+	bonus_mat = /datum/material/diamond
+
 ///Boulders usually spawned in lavaland labour camp area
 /obj/item/boulder/gulag
 	name = "low-quality boulder"
@@ -34,7 +62,7 @@
 	. = ..()
 
 	/// Static list of all minerals to populate gulag boulders with.
-	var/list/static/gulag_minerals = list(
+	var/static/list/gulag_minerals = list(
 		/datum/material/diamond = 1,
 		/datum/material/gold = 8,
 		/datum/material/iron = 95,
@@ -55,7 +83,7 @@
 	. = ..()
 
 	/// Static list of all minerals to populate gulag boulders with, but with bluespace added where safe.
-	var/list/static/expanded_gulag_minerals = list(
+	var/static/list/expanded_gulag_minerals = list(
 		/datum/material/bluespace = 1,
 		/datum/material/diamond = 1,
 		/datum/material/gold = 8,
@@ -65,12 +93,14 @@
 		/datum/material/titanium = 8,
 		/datum/material/uranium = 3,
 	)
-
 	set_custom_materials(list(pick_weight(expanded_gulag_minerals) = SHEET_MATERIAL_AMOUNT))
 
-///lowgrade boulder, most commonly spawned
+///lowgrade boulder, Exists as an admin spawn for testing
 /obj/item/boulder/shabby
 	name = "shabby boulder"
-	desc = "A bizzare, twisted boulder. Wait, wait no, it's just a rock."
+	desc = "A bizarre, twisted boulder. Wait, wait no, it's just a rock."
 	custom_materials = list(/datum/material/iron = SHEET_MATERIAL_AMOUNT * 1.1, /datum/material/glass = SHEET_MATERIAL_AMOUNT * 1.1)
 	durability = 1
+
+#undef BONUS_MATS_MINIMUM
+#undef BONUS_MATS_MAXIMUM

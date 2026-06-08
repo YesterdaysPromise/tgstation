@@ -3,12 +3,24 @@
 #define BB_BILEWORM_SPEW_BILE "BB_bileworm_spew_bile"
 #define BB_BILEWORM_RESURFACE "BB_bileworm_resurface"
 #define BB_BILEWORM_DEVOUR "BB_bileworm_devour"
+#define BB_BILEWORM_SCARED "BB_bileworm_scared"
+#define BB_BILEWORM_FLEE_DISTANCE "BB_bileworm_flee_distance"
 
 // Meteor Heart AI keys
 /// Key where we keep the spike trail ability
 #define BB_METEOR_HEART_GROUND_SPIKES "BB_meteor_ground_spikes"
 /// Key where we keep the spine traps ability
 #define BB_METEOR_HEART_SPINE_TRAPS "BB_meteor_spine_traps"
+
+// Cybersun AI core AI keys
+///key for lightning strike attack
+#define BB_CYBERSUN_CORE_LIGHTNING "BB_lightning_strike"
+///key for big laser attack
+#define BB_CYBERSUN_CORE_BARRAGE "BB_cybersun_barrage"
+
+// Donk Exenteration Drone keys
+// key for aoe slash attack
+#define BB_DEDBOT_SLASH "BB_dedbot_exenterate"
 
 // Spider AI keys
 /// Key where we store a turf to put webs on
@@ -40,6 +52,11 @@
 /// Key where goliath stores a hole it wants to get into
 #define BB_GOLIATH_HOLE_TARGET "BB_goliath_hole"
 
+// Tendril AI keys
+#define BB_TENDRIL_LASH "tendril_lash"
+#define BB_TENDRIL_CHASER "tendril_chaser"
+#define BB_TENDRIL_SPIKES "tendril_spikes"
+
 // bee keys
 ///the bee hive we live inside
 #define BB_CURRENT_HOME "BB_current_home"
@@ -60,6 +77,11 @@
 #define BB_LOBSTROSITY_TARGET_LIMB "BB_lobstrosity_target_limb"
 /// We increment this counter every time we try to move while dragging an arm and if we go too long we'll give up trying to get out of line of sight and just eat the fingers
 #define BB_LOBSTROSITY_FINGER_LUST "BB_lobstrosity_finger_lust"
+/// Does this carp still target lying mobs even if they aren't stunned, and flee from sary fishermen?
+#define BB_LOBSTROSITY_NAIVE_HUNTER "BB_lobstrosity_naive_hunter"
+
+/// Does this carp run from scary fishermen?
+#define BB_CARPS_FEAR_FISHERMAN "BB_carp_fear_fisherman"
 
 // eyeball keys
 ///the death glare ability
@@ -80,8 +102,6 @@
 #define BB_WHELP_STRAIGHTLINE_FIRE "BB_whelp_straightline_fire"
 ///whelp's secondary enraged ability
 #define BB_WHELP_WIDESPREAD_FIRE "BB_whelp_widespread_fire"
-///how enraged the whelp is
-#define BB_WHELP_ENRAGED "BB_whelp_enraged"
 ///the target rock we will attempt to create a sculpture out of
 #define BB_TARGET_ROCK "BB_target_rock"
 ///the cannibal target we shall consume
@@ -273,3 +293,61 @@
 //netguardians
 /// rocket launcher
 #define BB_NETGUARDIAN_ROCKET_ABILITY "netguardian_rocket"
+
+//deer
+///our water target
+#define BB_DEER_WATER_TARGET "deer_water_target"
+///our grass target
+#define BB_DEER_GRASS_TARGET "deer_grass_target"
+///our tree target
+#define BB_DEER_TREE_TARGET "deer_tree_target"
+///our temporary playmate
+#define BB_DEER_PLAYFRIEND "deer_playfriend"
+///our home target
+#define BB_DEER_TREEHOME "deer_home"
+///our resting duration
+#define BB_DEER_RESTING "deer_resting"
+///time till our next rest duration
+#define BB_DEER_NEXT_REST_TIMER "deer_next_rest_timer"
+
+//the thing boss
+#define BB_THETHING_CHARGE "BB_THETHING_CHARGE"
+#define BB_THETHING_DECIMATE "BB_THETHING_DECIMATE"
+#define BB_THETHING_BIGTENDRILS "BB_THETHING_BIGTENDRILS"
+#define BB_THETHING_SHRIEK "BB_THETHING_SHRIEK"
+#define BB_THETHING_CARDTENDRILS "BB_THETHING_CARDTENDRILS"
+#define BB_THETHING_ACIDSPIT "BB_THETHING_ACIDSPIT"
+/// Blackboard key for The Thing boss that determines attack mode. TRUE means it will focus on closing the distance and murdering the person in question. Otherwise AOE.
+#define BB_THETHING_ATTACKMODE "BB_THETHING_ATTACKMODE"
+/// The Thing will be in attack mode forever if true
+#define BB_THETHING_NOAOE "BB_THETHING_NOAOE"
+/// What (first in combo) attack was last executed
+#define BB_THETHING_LASTAOE "BB_THETHING_LASTAOE"
+
+//turtle
+///our tree's ability
+#define BB_TURTLE_TREE_ABILITY "turtle_tree_ability"
+///people we headbutt!
+#define BB_TURTLE_HEADBUTT_VICTIM "turtle_headbutt_victim"
+///flore we must smell
+#define BB_TURTLE_FLORA_TARGET "turtle_flora_target"
+
+#define BB_GUNMIMIC_GUN_EMPTY "BB_GUNMIMIC_GUN_EMPTY"
+
+//snails
+///snails retreat ability
+#define BB_SNAIL_RETREAT_ABILITY "snail_retreat_ability"
+
+//blood drunk miner keys
+///key for dash ability
+#define BB_BDM_DASH_ABILITY "BB_bdm_dash_ability"
+/// key for kinetic accelerator ability
+#define BB_BDM_KINETIC_ACCELERATOR_ABILITY "BB_bdm_kinetic_accelerator_ability"
+/// key for dash attack ability
+#define BB_BDM_DASH_ATTACK_ABILITY "BB_bdm_dash_attack_ability"
+/// key for transform weapon ability
+#define BB_BDM_TRANSFORM_WEAPON_ABILITY "BB_bdm_transform_weapon_ability"
+/// Shared cooldown group for blood drunk miner ranged abilities
+#define BB_BDM_RANGED_ATTACK_COOLDOWN "BB_bdm_ranged_attack_cooldown"
+/// Cooldown duration for blood drunk miner ranged abilities
+#define BB_BDM_RANGED_ATTACK_COOLDOWN_DURATION "BB_bdm_ranged_attack_cooldown_duration"

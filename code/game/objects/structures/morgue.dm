@@ -272,7 +272,7 @@ GLOBAL_LIST_EMPTY(bodycontainers) //Let them act as spawnpoints for revenants an
 	update_morgue_status()
 	update_appearance(UPDATE_ICON_STATE)
 	if(morgue_state == MORGUE_HAS_REVIVABLE && beeper && COOLDOWN_FINISHED(src, next_beep))
-		playsound(src, 'sound/weapons/gun/general/empty_alarm.ogg', 50, FALSE) //Revive them you blind fucks
+		playsound(src, 'sound/items/weapons/gun/general/empty_alarm.ogg', 50, FALSE) //Revive them you blind fucks
 		COOLDOWN_START(src, next_beep, beep_cooldown)
 
 	if(!connected || connected.loc != src)
@@ -315,17 +315,24 @@ GLOBAL_LIST_EMPTY(bodycontainers) //Let them act as spawnpoints for revenants an
 		return
 
 	for(var/mob/living/occupant as anything in stored_living)
-		if(occupant.stat == DEAD)
-			if(iscarbon(occupant))
-				var/mob/living/carbon/carbon_occupant = occupant
-				if(!carbon_occupant.can_defib_client())
-					continue
-			else
-				if(HAS_TRAIT(occupant, TRAIT_SUICIDED) || HAS_TRAIT(occupant, TRAIT_BADDNA) || (!occupant.key && !occupant.get_ghost(FALSE, TRUE)))
-					continue
-		morgue_state = MORGUE_HAS_REVIVABLE
-		return
+		if(occupant_revivable(occupant))
+			morgue_state = MORGUE_HAS_REVIVABLE
+			return
 	morgue_state = MORGUE_ONLY_BRAINDEAD
+
+/obj/structure/bodycontainer/morgue/proc/occupant_revivable(mob/living/occupant)
+	if(occupant.stat != DEAD)
+		return TRUE
+	if(HAS_TRAIT(occupant, TRAIT_GHOSTROLE_ON_REVIVE) && length(occupant.get_all_orbiters()))
+		return TRUE
+	if(iscarbon(occupant))
+		var/mob/living/carbon/carbon_occupant = occupant
+		return carbon_occupant.can_defib_client()
+	if(HAS_TRAIT(occupant, TRAIT_SUICIDED))
+		return FALSE
+	if(!occupant.key && !occupant.get_ghost(FALSE, TRUE))
+		return FALSE
+	return TRUE
 
 /obj/structure/bodycontainer/morgue/proc/handle_bodybag_enter(obj/structure/closet/body_bag/arrived_bag)
 	if(!arrived_bag.tag_name)
@@ -425,6 +432,10 @@ GLOBAL_LIST_EMPTY(crematoriums)
 
 /obj/structure/bodycontainer/crematorium/Initialize(mapload)
 	. = ..()
+	if(mapload && check_holidays(ICE_CREAM_DAY) && !istype(src, /obj/structure/bodycontainer/crematorium/creamatorium))
+		var/obj/structure/bodycontainer/crematorium/creamatorium/creamy = new(loc)
+		creamy.id = id
+		return INITIALIZE_HINT_QDEL
 	GLOB.crematoriums += src
 
 /obj/structure/bodycontainer/crematorium/Destroy()
@@ -451,50 +462,55 @@ GLOBAL_LIST_EMPTY(crematoriums)
 /obj/structure/bodycontainer/crematorium/proc/cremate(mob/user)
 	if(locked)
 		return //don't let you cremate something twice or w/e
+
 	// Make sure we don't delete the actual morgue and its tray
 	var/list/conts = get_all_contents() - src - connected
-
-	if(!conts.len)
+	if(!length(conts))
 		audible_message(span_hear("You hear a hollow crackle."))
 		return
 
-	else
-		audible_message(span_hear("You hear a roar as the crematorium activates."))
+	audible_message(span_hear("You hear a roar as the crematorium activates."))
+	locked = TRUE
+	update_appearance()
 
-		locked = TRUE
-		update_appearance()
+	for(var/mob/living/victim in conts)
+		if(victim.incorporeal_move) //can't cook revenants!
+			continue
 
-		for(var/mob/living/M in conts)
-			if(M.incorporeal_move) //can't cook revenants!
-				continue
-			if (M.stat != DEAD)
-				M.emote("scream")
-			if(user)
-				log_combat(user, M, "cremated")
-			else
-				M.log_message("was cremated", LOG_ATTACK)
+		if (victim.stat != DEAD)
+			victim.emote("scream")
 
-			if(user.stat != DEAD)
-				user.investigate_log("has died from being cremated.", INVESTIGATE_DEATHS)
-			M.death(TRUE)
-			if(M) //some animals get automatically deleted on death.
-				M.ghostize()
-				qdel(M)
+		if(user)
+			log_combat(user, victim, "cremated")
+		else
+			victim.log_message("was cremated", LOG_ATTACK)
 
-		for(var/obj/O in conts) //conts defined above, ignores crematorium and tray
-			if(istype(O, /obj/effect/dummy/phased_mob)) //they're not physical, don't burn em.
-				continue
-			qdel(O)
+		if(user.stat != DEAD)
+			user.investigate_log("has died from being cremated.", INVESTIGATE_DEATHS)
 
-		if(!locate(/obj/effect/decal/cleanable/ash) in get_step(src, dir))//prevent pile-up
-			new/obj/effect/decal/cleanable/ash(src)
+		victim.death(TRUE)
+		if(!QDELETED(victim)) //some animals get automatically deleted on death.
+			victim.ghostize()
+			qdel(victim)
 
-		sleep(3 SECONDS)
+	for(var/obj/to_destroy in conts) // conts defined above, ignores crematorium and tray
+		// Indestructible atoms should not be destroyed
+		if(istype(to_destroy, /obj/effect/dummy/phased_mob) || (to_destroy.resistance_flags & INDESTRUCTIBLE))
+			continue
+		qdel(to_destroy)
 
-		if(!QDELETED(src))
-			locked = FALSE
-			update_appearance()
-			playsound(src.loc, 'sound/machines/ding.ogg', 50, TRUE) //you horrible people
+	addtimer(CALLBACK(src, PROC_REF(unlock)), 3 SECONDS)
+
+/obj/structure/bodycontainer/crematorium/proc/unlock()
+	if(QDELETED(src))
+		return
+
+	if(!locate(/obj/effect/decal/cleanable/ash) in get_step(src, dir)) // As to prevent pile-up
+		new /obj/effect/decal/cleanable/ash(src)
+
+	locked = FALSE
+	update_appearance()
+	playsound(src.loc, 'sound/machines/ding.ogg', 50, TRUE) // You horrible people
 
 /obj/structure/bodycontainer/crematorium/creamatorium
 	name = "creamatorium"
@@ -518,6 +534,7 @@ GLOBAL_LIST_EMPTY(crematoriums)
 	density = TRUE
 	anchored = TRUE
 	pass_flags_self = PASSTABLE | LETPASSTHROW
+
 	max_integrity = 350
 
 	///The bodycontainer we are a tray to.
@@ -549,7 +566,7 @@ GLOBAL_LIST_EMPTY(crematoriums)
 		to_chat(user, span_warning("That's not connected to anything!"))
 	add_fingerprint(user)
 
-/obj/structure/tray/attackby(obj/P, mob/user, params)
+/obj/structure/tray/attackby(obj/P, mob/user, list/modifiers, list/attack_modifiers)
 	if(!istype(P, /obj/item/riding_offhand))
 		return ..()
 
@@ -558,28 +575,21 @@ GLOBAL_LIST_EMPTY(crematoriums)
 	if(carried_mob == user) //Piggyback user.
 		return
 	user.unbuckle_mob(carried_mob)
-	MouseDrop_T(carried_mob, user)
+	mouse_drop_receive(carried_mob, user)
 
-/obj/structure/tray/MouseDrop_T(atom/movable/O as mob|obj, mob/user)
-	if(!ismovable(O) || O.anchored || !Adjacent(user) || !user.Adjacent(O) || O.loc == user)
+/obj/structure/tray/mouse_drop_receive(atom/movable/O as mob|obj, mob/user, params)
+	if(!ismovable(O) || O.anchored || O.loc == user)
 		return
 	if(!ismob(O))
 		if(!istype(O, /obj/structure/closet/body_bag))
 			return
 	else
-		var/mob/M = O
-		if(M.buckled)
-			return
-	if(!ismob(user) || user.incapacitated())
-		return
-	if(isliving(user))
-		var/mob/living/L = user
-		if(L.body_position == LYING_DOWN)
+		var/mob/victim = O
+		if(victim.buckled)
 			return
 	O.forceMove(src.loc)
 	if (user != O)
 		visible_message(span_warning("[user] stuffs [O] into [src]."))
-	return
 
 /*
  * Crematorium tray

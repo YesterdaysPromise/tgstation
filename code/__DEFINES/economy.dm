@@ -67,15 +67,12 @@
 #define CIV_JOB_MED 11
 #define CIV_JOB_GROW 12
 #define CIV_JOB_ATMOS 13
-<<<<<<< HEAD
-#define VESSEL 14
-#define CIV_JOB_RANDOM 15
-=======
 #define CIV_JOB_BITRUN 14
-#define CIV_JOB_RANDOM 15
 
-#define MAXIMUM_BOUNTY_JOBS 14 //Should be equal to the highest numbered non-random job above.
->>>>>>> upstream/master
+#define VESSEL 15
+
+#define CIV_JOB_RANDOM 16
+#define MAXIMUM_BOUNTY_JOBS 16 //Should be equal to the highest numbered non-random job above.
 
 //These defines are to be used to with the payment component, determines which lines will be used during a transaction. If in doubt, go with clinical.
 #define PAYMENT_CLINICAL "clinical"

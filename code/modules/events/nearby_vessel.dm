@@ -162,13 +162,13 @@
 	end_when = rand(600, 1200)
 
 /datum/round_event_control/nearby_vessel/friendly/engi/announce(fake)
-	var/list/researchshship_types = list("Nanotrasen's Heavy Industry vessel full of our trusted technicians",\
+	var/list/engineership_types = list("Nanotrasen's Heavy Industry vessel full of our trusted technicians",\
 		"Nakamura Engineering vessel on contract to build a space station three systems away",\
 		"Goreckimil Architecture Team on their way for next terrestial city project",\
 		"Some friendly Spinward Coalition engineers",\
 		"The team which built your space station",
 	)
-	var/ship = pick(researchship_types)
+	var/ship = pick(engineership_types)
 	var/arrived = pick(arrival_type)
 	var/arrived = pick(arrival_reason)
 	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")
@@ -217,8 +217,31 @@
 			"cargo shipment headed and reserved for Novoyamoskva, capital of Spinward Sector",\
 			"Spinward Stellar Coalition tax ship",
 		)
-	if(generic_theme == nanotrasen)
-	var/ship = pick(researchship_types)
+	if(generic_theme == clown)
+		var/list/genericship_types = list("Interdyne Pharmaceutics medicine carrying cargo vessel",\
+			"a seemingly passive, semi-camouflaged vessel our intel suspects to belong to MI13",\
+			"cargo shipment headed and reserved for Novoyamoskva, capital of Spinward Sector",\
+			"Spinward Stellar Coalition tax ship",
+		)
+	if(generic_theme == pirates)
+		var/list/genericship_types = list("Interdyne Pharmaceutics medicine carrying cargo vessel",\
+			"a seemingly passive, semi-camouflaged vessel our intel suspects to belong to MI13",\
+			"cargo shipment headed and reserved for Novoyamoskva, capital of Spinward Sector",\
+			"Spinward Stellar Coalition tax ship",
+		)
+	if(generic_theme == unknown)
+		var/list/genericship_types = list("Interdyne Pharmaceutics medicine carrying cargo vessel",\
+			"a seemingly passive, semi-camouflaged vessel our intel suspects to belong to MI13",\
+			"cargo shipment headed and reserved for Novoyamoskva, capital of Spinward Sector",\
+			"Spinward Stellar Coalition tax ship",
+		)
+	if(generic_theme == golem)
+		var/list/genericship_types = list("Interdyne Pharmaceutics medicine carrying cargo vessel",\
+			"a seemingly passive, semi-camouflaged vessel our intel suspects to belong to MI13",\
+			"cargo shipment headed and reserved for Novoyamoskva, capital of Spinward Sector",\
+			"Spinward Stellar Coalition tax ship",
+		)
+	var/ship = pick(genericship_types)
 	var/arrived = pick(arrival_type)
 	var/arrived = pick(arrival_reason)
 	priority_announce("Due to [reason], [ship] seems to have [arrived] into [station_name()]'s system.", "Automated Arrival Announcer")

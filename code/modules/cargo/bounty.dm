@@ -122,13 +122,10 @@ GLOBAL_LIST_EMPTY(shared_crew_bounties)
 				chosen_type = pick(subtypesof(/datum/bounty/item/botany))
 			if(CIV_JOB_ATMOS)
 				chosen_type = pick(subtypesof(/datum/bounty/item/atmospherics))
-<<<<<<< HEAD
-			if(VESSEL)
-				chosen_type = pick(subtypesof(/datum/bounty/item/vessel))
-=======
 			if(CIV_JOB_BITRUN)
 				chosen_type = pick(subtypesof(/datum/bounty/item/bitrunning))
->>>>>>> upstream/master
+			if(VESSEL)
+				chosen_type = pick(subtypesof(/datum/bounty/item/vessel))
 		bounty_ref = new chosen_type
 		if(bounty_ref.can_get())
 			bounty_succeeded = TRUE

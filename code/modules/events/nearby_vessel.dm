@@ -2,8 +2,9 @@
 	///Used in randomizing announcements.
 	var/list/arrival_reason = list("recieving the wrong chart course",\
 		"having been tricked by a member of Wizard Federation",\
-		"assault executed by syndicate operatives",
-		"anomaly in their navigation system"
+		"assault executed by syndicate operatives",\
+		"anomaly in their navigation system",\
+        "statistically impropably unlucky set of circumstances",
 	)
 	var/list/arrival_type = list("blue-spaced",\
 		"somehow teleported",\
@@ -136,7 +137,7 @@
 		"spaceship manned by a bunch of egg-heads",\
 		"strange ship with a single, seemingly friendly alien scientist, almost a city's worth of archeology team, and massively oversized scanner beam",\
 		"ship of some nerds who claim your station might be unusually unlucky",\
-		"Nanostrasen's Futures and Innovation Division vessel",\
+		"Nanostrasen's Networking and Economics Research Division vessel",\
 		"star-system charting explorator-class vessel equipped with full scientific staff",\
 		"transport ship holding currently dormant xenomorph eggs retrieved straight from the war-front",\
 		"a vessel of bunch of bomb engineers claiming to have ties with now long defunct country of Cuba back on Terra"
@@ -175,27 +176,6 @@
 /datum/round_event/nearby_vessel/friendly/engi/start()
 
 
-///////////////
-
-/datum/round_event_control/eventname
-	name = "name"
-	typepath = /datum/round_event/eventname
-	weight = 10
-	max_occurrences = 1
-
-/datum/round_event_control/eventname/can_spawn_event()
-	. = ..()
-	if (!.)
-		return FALSE
-	var/datum/round_event/nearby_vessel/friendly/out_there = locate(/datum/round_event/nearby_vessel/friendly) in SSevents.running
-	return !!out_there
-
-
-
-if(SEC_LEVEL_RED)
-
-
-///////////////
 ///Neutral Ships///
 
 ///Generic
@@ -338,11 +318,3 @@ if(SEC_LEVEL_RED)
 
 
 
-
-	var/list/gps_locators = list()
-	for(var/datum/component/gps/G in GLOB.GPS_list) //nulls on the list somehow
-		if(G.tracking)
-			gps_locators[G.gpstag] = G
-
-	var/list/options = gps_locators
-	options += GLOB.teleportlocs

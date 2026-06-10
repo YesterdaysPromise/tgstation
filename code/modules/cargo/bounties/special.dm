@@ -57,7 +57,7 @@
 
 /datum/bounty/item/vessel/party
 	name = "Party Supplies"
-	description = "Oi, my Cap'n requests me to get some party supplies, yet as you might know, those don't just randomly drift in space. Fetch something party-like enough to satisfy the bugger, would ya?"
+	description = "Oi, my Cap'n requests me to get some party supplies, yet, as you might know, those don't just randomly drift in space. Fetch something party-like enough to satisfy the bugger, would ya?"
 	reward = CARGO_CRATE_VALUE * 12
 	wanted_types = list(
 		/obj/item/food/pizza = TRUE,
@@ -77,7 +77,7 @@
 
 /datum/bounty/item/vessel/funeral
 	name = "Flowers"
-	description = "So, a memnber of our crew just passed away, and it seems that some guy on drugs ate all our flowers because eating them 'healed' him, so that's rather awkward. Could you deliver some replacement for the funeral?"
+	description = "So, a member of our crew just passed away, and it seems that some guy on drugs ate all our flowers claiming that eating them 'healed' him, so that's rather awkward. Could you deliver some replacement for the funeral?"
 	reward = CARGO_CRATE_VALUE * 8
 	required_count = 3
 	wanted_types = list(
@@ -86,5 +86,3 @@
 		/obj/item/food/grown/rose = TRUE,
 	)
 
-=======
->>>>>>> upstream/master
